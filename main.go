@@ -1,7 +1,11 @@
 package main
 
-import "play-with-go-lang/scanner"
+import (
+	_ "play-with-go-lang/scanner"
+	"play-with-go-lang/utils"
+)
 
 func main(){
-	scanner.Run()
+	// scanner.Run()
+	utils.ConvertByteToString()
 }
