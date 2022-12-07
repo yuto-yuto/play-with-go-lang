@@ -1,11 +1,16 @@
 package main
 
 import (
-	_ "play-with-go-lang/scanner"
+	"play-with-go-lang/scanner"
 	"play-with-go-lang/utils"
 )
 
-func main(){
+func unused(x ...interface{}) {}
+
+func main() {
+	unused(scanner.ErrScannerNotFound)
+
 	// scanner.Run()
-	utils.ConvertByteToString()
+	// utils.ConvertByteToString()
+	utils.StringHandling()
 }
