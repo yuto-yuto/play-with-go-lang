@@ -12,18 +12,29 @@ func (m myStruct) String() string {
 }
 
 func StringHandling() {
-	str := string("Hello world!")
-	fmt.Println(&str) // 0xc000014300
-	fmt.Println(str)  // Hello world!
+	var str string
+	fmt.Printf("[%s]\n", str) // []
+	fmt.Println(&str)         // 0xc000014300
+
+	str = string("Hello world!")
+	fmt.Println(str) // Hello world!
 	fmt.Println()
 
 	var strPointer *string
 	fmt.Println(strPointer == nil) // true
+	fmt.Println(strPointer)        // <nil>
+	fmt.Println(&strPointer)       // 0xc000012038
+	// fmt.Println(*strPointer)     invalid memory address or nil pointer dereference
 	temp := string("Hello world!")
 	strPointer = &temp
+	fmt.Println(&temp)       // 0xc000014320
 	fmt.Println(strPointer)  // 0xc000014320
 	fmt.Println(*strPointer) // Hello world!
 	fmt.Println()
+
+	temp += "Additional text."
+	fmt.Println(temp)        // Hello world!Additional text.
+	fmt.Println(*strPointer) // Hello world!Additional text.
 
 	fmt.Printf("&str == strPointer => %t\n", &str == strPointer) // &str == strPointer => false
 	fmt.Printf("str == *strPointer => %t\n", str == *strPointer) // str == *strPointer => true
@@ -43,16 +54,23 @@ func StringHandling() {
 
 	arrayValue := [5]int{1, 2, 3, 4, 5}
 	arrayStr := fmt.Sprint(arrayValue)
-	fmt.Printf("arrayValue: %s\n", arrayStr)
+	fmt.Printf("arrayValue: %s\n", arrayStr) // arrayValue: [1 2 3 4 5]
 	fmt.Println()
 
 	myStruct := myStruct{name: "Yuto", age: 35}
 	fmt.Printf("%%v: %v\n", myStruct)   // %v: {Yuto 35}
 	fmt.Printf("%%T: %T\n", myStruct)   // %T: utils.myStruct
 	fmt.Printf("%%#v: %#v\n", myStruct) // %#v: utils.myStruct{name:"Yuto", age:0x23}
+
+	fmt.Printf("%%+v: %+v\n", myStruct) // %+v: {name:Yuto age:35}
+	struct_v := fmt.Sprintf("%+v", myStruct)
+	fmt.Println(struct_v) // {name:Yuto age:35}
+
 	fmt.Println(myStruct)
 	// When String() is NOT defined => {Yuto 35}
 	// When String() is defined     => { name: Yuto, age: 35 }
+	structStr := fmt.Sprint(myStruct)
+	fmt.Println(structStr) // { name: Yuto, age: 35 }
 	fmt.Println()
 
 	numberStr := "0123456789"
