@@ -8,9 +8,10 @@ import (
 func unused(x ...interface{}) {}
 
 func main() {
-	unused(scanner.ErrScannerNotFound)
+	unused(scanner.ErrScannerNotFound, utils.ConvertByteToString)
 
 	// scanner.Run()
 	// utils.ConvertByteToString()
-	utils.StringHandling()
+	// utils.StringHandling()
+	utils.HandleJson()
 }
