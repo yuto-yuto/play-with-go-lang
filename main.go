@@ -1,6 +1,7 @@
 package main
 
 import (
+	"play-with-go-lang/channel_context"
 	"play-with-go-lang/scanner"
 	"play-with-go-lang/utils"
 )
@@ -8,10 +9,12 @@ import (
 func unused(x ...interface{}) {}
 
 func main() {
-	unused(scanner.ErrScannerNotFound, utils.ConvertByteToString)
+	unused(scanner.ErrScannerNotFound, utils.ConvertByteToString, channelcontext.RunChannelContext)
 
 	// scanner.Run()
 	// utils.ConvertByteToString()
 	// utils.StringHandling()
-	utils.HandleJson()
+	// utils.HandleJson()
+	// utils.DoStructTest()
+	channelcontext.RunChannelContext()
 }
