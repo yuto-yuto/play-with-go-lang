@@ -2,6 +2,7 @@ package main
 
 import (
 	"play-with-go-lang/channel_context"
+	"play-with-go-lang/enum"
 	"play-with-go-lang/scanner"
 	"play-with-go-lang/utils"
 )
@@ -9,13 +10,14 @@ import (
 func unused(x ...interface{}) {}
 
 func main() {
-	unused(scanner.ErrScannerNotFound, utils.ConvertByteToString, channelcontext.RunChannelContext)
+	unused(scanner.ErrScannerNotFound, utils.ConvertByteToString, channelcontext.RunChannelContext, enum.RunEnum)
 
 	// scanner.Run()
 	// utils.ConvertByteToString()
 	// utils.StringHandling()
 	// utils.HandleJson()
 	// utils.DoStructTest()
-	channelcontext.RunChannelContext()
+	// channelcontext.RunChannelContext()
 	// utils.RunOptionalParams()
+	enum.RunEnum()
 }
