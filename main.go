@@ -16,6 +16,6 @@ func main() {
 	// utils.StringHandling()
 	// utils.HandleJson()
 	// utils.DoStructTest()
-	// channelcontext.RunChannelContext()
-	utils.RunOptionalParams()
+	channelcontext.RunChannelContext()
+	// utils.RunOptionalParams()
 }
