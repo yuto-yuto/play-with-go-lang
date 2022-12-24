@@ -3,25 +3,44 @@ package channelcontext
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 )
 
 const numberOfMsg = 3
 
-func send(channel chan int) {
-	for i := 0; i < numberOfMsg; i++ {
-		channel <- (i + 1)
+func sendWithCallback(cb func(data string)) {
+	for i := 0; i < 3; i++ {
+		data := fmt.Sprintf("Hello: %d", i+1)
+		cb(data)
 		time.Sleep(time.Second)
 	}
 }
 
-func receive(channel chan int) {
+func sendWithCallback2(cb func(data string), wg *sync.WaitGroup) {
+	for i := 0; i < 3; i++ {
+		data := fmt.Sprintf("Hello: %d", i+1)
+		cb(data)
+		time.Sleep(time.Second)
+	}
+	wg.Done()
+}
+
+func receiver(data string) {
+	fmt.Printf("Received: [%s]\n", data)
+}
+
+func send(channel chan string) {
+	for i := 0; i < numberOfMsg; i++ {
+		channel <- fmt.Sprintf("Hello: %d", (i + 1))
+		time.Sleep(time.Second)
+	}
+}
+
+func receive(channel chan string) {
 	for {
 		data := <-channel
-		fmt.Printf("Received: %d\n", data)
-		if data == numberOfMsg {
-			break
-		}
+		fmt.Printf("Received: [%s]\n", data)
 	}
 }
 

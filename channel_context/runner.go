@@ -1,7 +1,12 @@
 package channelcontext
 
 func RunChannelContext() {
+	// runWithoutGoroutine()
+	// runWithGoroutine()
 	// runChannelTest()
-	// runChannelWithContext()
-	runChannelWithTimeoutContext()
+	// runChannelTest2()
+	// runChannelTest3()
+	// runChannelTest4()
+	runChannelWithContext()
+	// runChannelWithTimeoutContext()
 }
