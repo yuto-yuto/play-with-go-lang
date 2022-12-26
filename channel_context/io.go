@@ -2,7 +2,9 @@ package channelcontext
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 )
@@ -44,44 +46,71 @@ func receive(channel chan string) {
 	}
 }
 
-func sendWithContext(ctx context.Context, channel chan int) {
+func sendWithContext(ctx context.Context, channel chan string) {
 	for i := 0; ; i++ {
-		channel <- (i + 1)
-		time.Sleep(time.Second)
-
 		select {
 		case <-ctx.Done():
-			fmt.Println("send loop ends")
+			fmt.Printf("send loop ends %s\n", ctx.Err().Error())
 			return
 		default:
+			channel <- fmt.Sprintf("Hello: %d", (i + 1))
+			time.Sleep(time.Second)
 		}
 	}
 }
 
-func receiveWithContext(ctx context.Context, channel chan int) {
-	for {
-		data := <-channel
-		fmt.Printf("Received: %d\n", data)
-
+func sendWithContextWithRandomTime(ctx context.Context, channel chan string) {
+	for i := 0; ; i++ {
 		select {
 		case <-ctx.Done():
-			fmt.Println("receive loop ends")
+			fmt.Printf("send loop ends %s\n", ctx.Err().Error())
 			return
 		default:
+			channel <- fmt.Sprintf("Hello: %d", (i + 1))
+			randomDelay := time.Duration(rand.Intn(2000)) * time.Millisecond
+			time.Sleep(randomDelay)
 		}
 	}
 }
 
-func receiveWithTimeoutContext(ctx context.Context, channel chan int) {
-
+func receiveWithContext(ctx context.Context, channel chan string) {
 	for {
 		select {
 		case data := <-channel:
-			fmt.Printf("Received: %d\n", data)
+			fmt.Printf("Received: %s\n", data)
+		case <-ctx.Done():
+			fmt.Printf("receive loop ends: %s\n", ctx.Err().Error())
+			return
+		}
+	}
+}
+
+func receiveWithTimeout(ctx context.Context, channel chan string) {
+	for {
+		select {
+		case data := <-channel:
+			fmt.Printf("Received: %s\n", data)
+		case <-ctx.Done():
+			err := ctx.Err()
+			if errors.Is(err, context.Canceled) {
+				fmt.Println("Canceled")
+			} else if errors.Is(err, context.DeadlineExceeded) {
+				fmt.Println("Timeout")
+			}
+			return
+		}
+	}
+}
+
+func receiveWithCancelAndTimeout(ctx context.Context, channel chan string) {
+	for {
+		select {
+		case data := <-channel:
+			fmt.Printf("Received: %s\n", data)
 		case <-time.After(time.Second):
 			fmt.Println("timeout")
 		case <-ctx.Done():
-			fmt.Println("canceled")
+			fmt.Printf("receive loop ends: %s\n", ctx.Err().Error())
 			return
 		}
 	}
