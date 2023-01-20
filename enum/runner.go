@@ -17,5 +17,6 @@ func requireEnum(value state.State) {
 func RunEnum() {
 	requireEnum(state.Error)
 	requireEnum(state.Ready)
+	requireEnum("Ready")
 	requireEnum("non-enum")
 }
