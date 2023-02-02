@@ -1,8 +1,9 @@
 package main
 
 import (
-	"play-with-go-lang/channel_context"
+	channelcontext "play-with-go-lang/channel_context"
 	"play-with-go-lang/enum"
+	packagestructure "play-with-go-lang/package_structure"
 	"play-with-go-lang/scanner"
 	"play-with-go-lang/utils"
 )
@@ -22,5 +23,6 @@ func main() {
 	// enum.RunEnum()
 	// utils.FormatTime()
 	// utils.SliceTest()
-	utils.CreateFile()
+	// utils.CreateFile()
+	packagestructure.PrintGreeting()
 }
