@@ -31,6 +31,7 @@ func arbitraryAny(args ...any) {
 }
 
 func arbitraryObj(args ...any) {
+	fmt.Println("--- arbitraryObj ---")
 	for index, obj := range args {
 		fmt.Printf("%d: %#v\n", index, obj)
 		if reflect.TypeOf(obj) == reflect.TypeOf(unknownObj1{}) {
@@ -43,8 +44,30 @@ func arbitraryObj(args ...any) {
 	}
 }
 
+func arbitraryArgs(args ...any) {
+	fmt.Println("--- arbitraryArgs ---")
+	for index, val := range args {
+		fmt.Printf("%d: ", index)
+
+		switch v := val.(type) {
+		case string:
+			fmt.Println("String ", v)
+		case int:
+			fmt.Println("Int ", v)
+		case float64:
+			fmt.Println("Float64 ", v)
+		case unknownObj1:
+			fmt.Println("Special ", v)
+		default:
+			fmt.Println("Unknown data type: ", reflect.TypeOf(v))
+		}
+	}
+}
+
 func RunArbitraryNumberOfArgs() {
 	arbitraryNumbers(22, 77, 44, 57, 92, 23)
+	arr := []int{22, 77, 44, 57, 92, 23}
+	arbitraryNumbers(arr...)
 	arbitraryStrings("Hello", "Wor", "ld", "!!!")
 	arbitraryAny("Hello", 123, "Wor", 987, "ld", 888, "!!!")
 	obj1 := unknownObj1{
@@ -57,4 +80,6 @@ func RunArbitraryNumberOfArgs() {
 		Count: 66,
 	}
 	arbitraryObj(obj1, obj2)
+
+	
 }
