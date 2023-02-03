@@ -11,7 +11,11 @@ import (
 func unused(x ...interface{}) {}
 
 func main() {
-	unused(scanner.ErrScannerNotFound, utils.ConvertByteToString, channelcontext.RunChannelContext, enum.RunEnum)
+	unused(scanner.ErrScannerNotFound,
+		utils.ConvertByteToString,
+		channelcontext.RunChannelContext,
+		enum.RunEnum,
+		packagestructure.PrintGreeting)
 
 	// scanner.Run()
 	// utils.ConvertByteToString()
@@ -25,4 +29,5 @@ func main() {
 	// utils.SliceTest()
 	// utils.CreateFile()
 	packagestructure.PrintGreeting()
+	// utils.RunArbitraryNumberOfArgs()
 }

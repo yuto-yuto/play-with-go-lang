@@ -27,6 +27,19 @@ var _ = Describe("Provider", func() {
 			Expect(data).Should(Equal("inject fake data"))
 		})
 
+		It("should return data (call the function twice)", func() {
+			instance := selfmock.NewProvider(readerMock)
+			readerMock.FakeRead = func(size int) (string, error) {
+				return "inject fake data", nil
+			}
+
+			instance.ProvideData()
+			instance.ProvideData()
+			Expect(readerMock.spy.CallCount[readKey]).Should(Equal(2))
+			Expect(readerMock.spy.Args[readKey][0][0]).Should(Equal(99))
+			Expect(readerMock.spy.Args[readKey][1][0]).Should(Equal(99))
+		})
+
 		It("should call Close method when data is read", func() {
 			instance := selfmock.NewProvider(readerMock)
 			readerMock.FakeRead = func(size int) (string, error) {
@@ -35,7 +48,7 @@ var _ = Describe("Provider", func() {
 
 			_, err := instance.ProvideData()
 			Expect(err).ShouldNot(HaveOccurred())
-			Expect(readerMock.callCount[closeKey]).Should(Equal(1))
+			Expect(readerMock.spy.CallCount[closeKey]).Should(Equal(1))
 		})
 
 		It("should throw an error when Open method returns error", func() {
@@ -55,7 +68,7 @@ var _ = Describe("Provider", func() {
 			}
 
 			instance.ProvideData()
-			_, prs := readerMock.callCount[closeKey]
+			_, prs := readerMock.spy.CallCount[closeKey]
 			Expect(prs).Should(BeFalse())
 		})
 
