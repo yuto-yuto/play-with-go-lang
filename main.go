@@ -28,6 +28,7 @@ func main() {
 	// utils.FormatTime()
 	// utils.SliceTest()
 	// utils.CreateFile()
-	packagestructure.PrintGreeting()
+	// packagestructure.PrintGreeting()
 	// utils.RunArbitraryNumberOfArgs()
+	utils.GetValueFromInterface()
 }
