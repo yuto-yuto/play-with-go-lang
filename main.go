@@ -30,5 +30,6 @@ func main() {
 	// utils.CreateFile()
 	// packagestructure.PrintGreeting()
 	// utils.RunArbitraryNumberOfArgs()
-	utils.GetValueFromInterface()
+	// utils.GetValueFromInterface()
+	utils.SplitString()
 }
