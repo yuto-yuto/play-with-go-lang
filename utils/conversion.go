@@ -7,6 +7,8 @@ import (
 )
 
 const (
+	Bit0  = 0
+	Bit8  = 8
 	Bit32 = 32
 	Bit64 = 64
 	DEC   = 10
@@ -19,6 +21,7 @@ func ConvertBetweenStringAndNumber() {
 	intValue := 128
 	fmt.Println(strconv.FormatInt(int64(intValue), DEC)) // 128
 	fmt.Println(strconv.FormatInt(int64(intValue), HEX)) // 80
+	fmt.Println(strconv.FormatInt(int64(14), HEX))       // e
 	fmt.Println(strconv.FormatInt(int64(intValue), BI))  // 10000000
 	fmt.Println(strconv.Itoa(intValue))                  // 128
 	fmt.Println(fmt.Sprint(intValue))                    // 128
@@ -32,9 +35,10 @@ func ConvertBetweenStringAndNumber() {
 	fmt.Println(float64(intValue)) // 128
 	fmt.Println(float32(intValue)) // 128
 	// fmt.Printf format %f has arg intValue of wrong type int
-	fmt.Printf("%f\n", intValue)          // %!f(int=128)
-	fmt.Printf("%f\n", float64(intValue)) // 128.000000
-	fmt.Printf("%f\n", float32(intValue)) // 128.000000
+	fmt.Printf("%f\n", intValue)            // %!f(int=128)
+	fmt.Printf("%f\n", float64(intValue))   // 128.000000
+	fmt.Printf("%f\n", float32(intValue))   // 128.000000
+	fmt.Printf("%.2f\n", float64(intValue)) // 128.00
 
 	fmt.Println("--- int -> int64 ---")
 	fmt.Println(int64(intValue))  // 128
@@ -45,14 +49,13 @@ func ConvertBetweenStringAndNumber() {
 
 	fmt.Println("--- string -> int32/int64 ---")
 	strValue := "128"
-	fmt.Println(strconv.ParseInt(strValue, DEC, Bit32))  // 128 <nil>
 	fmt.Println(strconv.ParseInt(strValue, DEC, Bit64))  // 128 <nil>
-	fmt.Println(strconv.ParseInt(strValue, HEX, Bit32))  // 296 <nil>
 	fmt.Println(strconv.ParseInt(strValue, HEX, Bit64))  // 296 <nil>
-	fmt.Println(strconv.ParseInt(strValue, BI, Bit32))   // 0 strconv.ParseInt: parsing "128": invalid syntax
 	fmt.Println(strconv.ParseInt(strValue, BI, Bit64))   // 0 strconv.ParseInt: parsing "128": invalid syntax
-	fmt.Println(strconv.ParseInt("11110000", BI, Bit32)) // 240 <nil>
 	fmt.Println(strconv.ParseInt("11110000", BI, Bit64)) // 240 <nil>
+	fmt.Println(strconv.ParseInt(strValue, DEC, Bit0))   // 128 <nil>
+	fmt.Println(strconv.ParseInt(strValue, DEC, Bit8))   // 127 strconv.ParseInt: parsing "128": value out of range
+	fmt.Println(strconv.ParseInt("127", DEC, Bit8))      // 127 <nil>
 
 	fmt.Println("--- string -> float64 ---")
 	strFloatValue := "128.123"
@@ -72,13 +75,16 @@ func ConvertBetweenStringAndNumber() {
 	fmt.Println(strconv.FormatFloat(floatValue, 'f', 5, Bit64))  // 128.12346
 	fmt.Println(strconv.FormatFloat(floatValue, 'f', 10, Bit64)) // 128.1234560000
 
-	fmt.Println(strconv.FormatFloat(floatValue, 'b', -1, Bit64)) // 4507943349211095p-45
-	fmt.Println(strconv.FormatFloat(floatValue, 'e', -1, Bit64)) // 1.28123456e+02
-	fmt.Println(strconv.FormatFloat(floatValue, 'E', -1, Bit64)) // 1.28123456E+02
-	fmt.Println(strconv.FormatFloat(floatValue, 'g', -1, Bit64)) // 128.123456
-	fmt.Println(strconv.FormatFloat(floatValue, 'G', -1, Bit64)) // 128.123456
-	fmt.Println(strconv.FormatFloat(floatValue, 'x', -1, Bit64)) // 0x1.003f359ff4fd7p+07
-	fmt.Println(strconv.FormatFloat(floatValue, 'X', -1, Bit64)) // 0X1.003F359FF4FD7P+07
+	fmt.Println(strconv.FormatFloat(floatValue, 'b', -1, Bit64))        // 4507943349211095p-45
+	fmt.Println(strconv.FormatFloat(floatValue, 'e', -1, Bit64))        // 1.28123456e+02
+	fmt.Println(strconv.FormatFloat(floatValue, 'E', -1, Bit64))        // 1.28123456E+02
+	fmt.Println(strconv.FormatFloat(floatValue, 'E', 3, Bit64))         // 1.281E+02
+	fmt.Println(strconv.FormatFloat(floatValue, 'g', -1, Bit64))        // 128.123456
+	fmt.Println(strconv.FormatFloat(floatValue, 'G', -1, Bit64))        // 128.123456
+	fmt.Println(strconv.FormatFloat(12345678901234567, 'G', -1, Bit64)) // 11.2345678901234568E+16
+	fmt.Println(strconv.FormatFloat(12345678901234567, 'G', 5, Bit64))  // 11.2346E+16
+	fmt.Println(strconv.FormatFloat(floatValue, 'x', -1, Bit64))        // 0x1.003f359ff4fd7p+07
+	fmt.Println(strconv.FormatFloat(floatValue, 'X', -1, Bit64))        // 0X1.003F359FF4FD7P+07
 
 	fmt.Println("--- float64 -> int ---")
 	fmt.Println(int(floatValue))   // 128

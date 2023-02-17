@@ -31,5 +31,6 @@ func main() {
 	// packagestructure.PrintGreeting()
 	// utils.RunArbitraryNumberOfArgs()
 	// utils.GetValueFromInterface()
-	utils.SplitString()
+	// utils.SplitString()
+	utils.ConvertBetweenStringAndNumber()
 }
