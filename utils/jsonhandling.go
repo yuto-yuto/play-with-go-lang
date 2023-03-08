@@ -205,24 +205,49 @@ func nested() {
 	jsonBytes, _ := json.MarshalIndent(department, prefix, indent)
 	fmt.Println(string(jsonBytes))
 	// {
-    //     "name": "Technical Feeder",
-    //     "Members": [
-    //             {
-    //                     "Name": "Yuto",
-    //                     "age": 35,
-    //                     "gender": "Male",
-    //                     "role": "Software Developer",
-    //                     "WithoutSchema": ""
-    //             },
-    //             {
-    //                     "Name": "Daniel",
-    //                     "age": 40,
-    //                     "gender": "Male",
-    //                     "role": "Software Tester",
-    //                     "WithoutSchema": ""
-    //             }
-    //     ]
+	//     "name": "Technical Feeder",
+	//     "Members": [
+	//             {
+	//                     "Name": "Yuto",
+	//                     "age": 35,
+	//                     "gender": "Male",
+	//                     "role": "Software Developer",
+	//                     "WithoutSchema": ""
+	//             },
+	//             {
+	//                     "Name": "Daniel",
+	//                     "age": 40,
+	//                     "gender": "Male",
+	//                     "role": "Software Tester",
+	//                     "WithoutSchema": ""
+	//             }
+	//     ]
 	// }
+}
+
+func withoutStruct() {
+	var objMap map[string]any
+
+	if err := json.Unmarshal([]byte(`{"name": "Yuto", "prop1": 12, "prop2": false}`), &objMap); err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(objMap)          // map[name:Yuto prop1:12 prop2:false]
+	fmt.Println(objMap["name"])  // Yuto
+	fmt.Println(objMap["prop1"]) // 12
+	fmt.Println(objMap["prop2"]) // false
+	for key, value := range objMap {
+		fmt.Printf("key: %s, value: %s\n", key, value)
+	}
+
+	var objMapList []map[string]any
+
+	if err := json.Unmarshal([]byte(`[{"name": "Yuto", "prop1": 12}, {"name": "Yuto2", "prop1": 33}]`), &objMapList); err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(objMapList[0]) // map[name:Yuto prop1:12]
+	fmt.Println(objMapList[1]) // map[name:Yuto2 prop1:33]
 }
 
 func HandleJson() {
@@ -231,5 +256,6 @@ func HandleJson() {
 	// nullAssign()
 	// runWithEmpty()
 	// ignoreKey()
-	nested()
+	// nested()
+	withoutStruct()
 }
