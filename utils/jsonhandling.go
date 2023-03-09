@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 )
 
 type department struct {
@@ -225,17 +226,63 @@ func nested() {
 	// }
 }
 
+func showData(data any) {
+	dataType := reflect.TypeOf(data).Kind().String()
+	fmt.Printf("type: %s, value: %+v\n", dataType, data)
+}
+
 func withoutStruct() {
 	var objMap map[string]any
 
-	if err := json.Unmarshal([]byte(`{"name": "Yuto", "prop1": 12, "prop2": false}`), &objMap); err != nil {
+	if err := json.Unmarshal([]byte(`{
+		"name": "Yuto",
+		"prop1": 12,
+		"prop2": false,
+		"prop3": [1,2,3,"str"],
+		"prop4": 2.2,
+		"prop5": {
+			"prop5-nested": 15
+		  }
+		}`), &objMap); err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(objMap)          // map[name:Yuto prop1:12 prop2:false]
-	fmt.Println(objMap["name"])  // Yuto
-	fmt.Println(objMap["prop1"]) // 12
-	fmt.Println(objMap["prop2"]) // false
+	showData(objMap)                            // type: map, value: map[name:Yuto prop1:12 prop2:false prop3:[1 2 3] prop4:2.2]
+	showData(objMap["name"])                    // type: string, value: Yuto
+	showData(objMap["prop1"])                   // type: float64, value: 12
+	fmt.Println(objMap["prop1"] == 12)          // false
+	fmt.Println(objMap["prop1"] == float64(12)) // true
+	showData(objMap["prop2"])                   // type: bool, value: false
+
+	array := objMap["prop3"]
+	showData(array) // type: slice, value: [1 2 3,str]
+
+	valueOfArray := reflect.ValueOf(array)
+	showData(valueOfArray.Index(0).Interface())     // type: float64, value: 1
+	showData(valueOfArray.Index(0).Elem().Float())  // type: float64, value: 1
+	showData(valueOfArray.Index(1).Interface())     // type: float64, value: 2
+	showData(valueOfArray.Index(1).Elem().Float())  // type: float64, value: 2
+	showData(valueOfArray.Index(2).Interface())     // type: float64, value: 3
+	showData(valueOfArray.Index(2).Elem().Float())  // type: float64, value: 3
+	showData(valueOfArray.Index(3).Interface())     // type: string, value: str
+	showData(valueOfArray.Index(3).Elem().String()) // type: string, value: str
+
+	showData(objMap["prop4"]) // type: float64, value: 2.2
+
+	nestedObj := objMap["prop5"]
+	showData(nestedObj) // type: map, value: map[prop5-nested:15]
+
+	valueOfNestedObj := reflect.ValueOf(nestedObj)
+	showData(valueOfNestedObj) // type: struct, value: map[prop5-nested:15]
+
+	convertedMap, ok := nestedObj.(map[string]any)
+	if !ok {
+		fmt.Println("conversion error for map")
+	} else {
+		showData(convertedMap["prop5-nested"]) // type: float64, value: 15
+	}
+
+	fmt.Println()
 	for key, value := range objMap {
 		fmt.Printf("key: %s, value: %s\n", key, value)
 	}
