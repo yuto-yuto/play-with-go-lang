@@ -34,6 +34,14 @@ func acceptAnyValue(arg any) {
 		fmt.Printf("Int32: %d", v)
 	case float64:
 		fmt.Printf("float64: %f", v)
+	case map[string]int:
+		fmt.Printf("map[string]int: %+v", v)
+	case map[int]string:
+		fmt.Printf("map[int]string: %+v", v)
+	case map[string]map[any]any:
+		fmt.Printf("map[string]map[any]any: %+v", v)
+	case []int:
+		fmt.Printf("[]int: %+v", v)
 	case unknownObj1:
 		fmt.Println(reflect.TypeOf(arg) == reflect.TypeOf(unknownObj1{})) // true
 		fmt.Println(reflect.TypeOf(arg) == reflect.TypeOf(unknownObj2{})) // false
@@ -72,7 +80,19 @@ func GetValueFromInterface() {
 	acceptAnyValue(523)
 	acceptAnyValue(11.123)
 	acceptAnyValue("value")
-	acceptAnyValue(make(map[string]int))
+	map1 := make(map[string]int)
+	map1["prop1"] = 1
+	map1["prop2"] = 2
+	acceptAnyValue(map1)
+	map2 := make(map[int]string)
+	map2[1] = "ABC"
+	map2[2] = "XYZ"
+	acceptAnyValue(map2)
+	map3 := make(map[string]map[int]string)
+	map3["first"] = map2
+	acceptAnyValue(map3)
+	acceptAnyValue([]int{1, 2, 3})
+	acceptAnyValue([]int64{1, 2, 3})
 	acceptUnknownType(obj1)
 	acceptUnknownType(obj2)
 }

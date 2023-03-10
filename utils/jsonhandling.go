@@ -266,6 +266,10 @@ func withoutStruct() {
 	// type: string, value: str
 
 	valueOfArray := reflect.ValueOf(array)
+	fmt.Println(valueOfArray.Kind().String())         // slice
+	fmt.Println(valueOfArray.Kind() == reflect.Slice) // true
+	showData(valueOfArray.Len())                      // type: int, value: 4
+
 	showData(valueOfArray.Index(0).Interface())     // type: float64, value: 1
 	showData(valueOfArray.Index(0).Elem().Float())  // type: float64, value: 1
 	showData(valueOfArray.Index(1).Interface())     // type: float64, value: 2
