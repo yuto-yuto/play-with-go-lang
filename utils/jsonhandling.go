@@ -237,25 +237,33 @@ func withoutStruct() {
 	if err := json.Unmarshal([]byte(`{
 		"name": "Yuto",
 		"prop1": 12,
-		"prop2": false,
-		"prop3": [1,2,3,"str"],
-		"prop4": 2.2,
-		"prop5": {
-			"prop5-nested": 15
-		  }
+		"prop2": 2.2,
+		"prop3": false,
+		"prop4": null,
+		"prop5": [1,2,3,"str"],
+		"prop6": {
+			"prop6-nested": 15
+		}
 		}`), &objMap); err != nil {
 		fmt.Println(err)
 		return
 	}
-	showData(objMap)                            // type: map, value: map[name:Yuto prop1:12 prop2:false prop3:[1 2 3] prop4:2.2]
+	showData(objMap)                            // type: map, value: map[name:Yuto prop1:12 prop2:2.2 prop3:false prop4:<nil> prop5:[1 2 3 str] prop6:map[prop6-nested:15]]
 	showData(objMap["name"])                    // type: string, value: Yuto
 	showData(objMap["prop1"])                   // type: float64, value: 12
 	fmt.Println(objMap["prop1"] == 12)          // false
 	fmt.Println(objMap["prop1"] == float64(12)) // true
-	showData(objMap["prop2"])                   // type: bool, value: false
+	showData(objMap["prop2"])                   // type: float64, value: 2.2
+	showData(objMap["prop3"])                   // type: bool, value: false
+	fmt.Println(objMap["prop4"])                // <nil>
 
-	array := objMap["prop3"]
+	array := objMap["prop5"]
 	showData(array) // type: slice, value: [1 2 3,str]
+	handleArrayAndMap(array)
+	// type: float64, value: 1
+	// type: float64, value: 2
+	// type: float64, value: 3
+	// type: string, value: str
 
 	valueOfArray := reflect.ValueOf(array)
 	showData(valueOfArray.Index(0).Interface())     // type: float64, value: 1
@@ -267,25 +275,34 @@ func withoutStruct() {
 	showData(valueOfArray.Index(3).Interface())     // type: string, value: str
 	showData(valueOfArray.Index(3).Elem().String()) // type: string, value: str
 
-	showData(objMap["prop4"]) // type: float64, value: 2.2
+	fmt.Println()
 
-	nestedObj := objMap["prop5"]
-	showData(nestedObj) // type: map, value: map[prop5-nested:15]
+	nestedObj := objMap["prop6"]
+	showData(nestedObj)          // type: map, value: map[prop6-nested:15]
+	handleArrayAndMap(nestedObj) // key: prop6-nested, value: 15
 
 	valueOfNestedObj := reflect.ValueOf(nestedObj)
-	showData(valueOfNestedObj) // type: struct, value: map[prop5-nested:15]
+	showData(valueOfNestedObj)                                           // type: struct, value: map[prop6-nested:15]
+	showData(valueOfNestedObj.MapIndex(reflect.ValueOf("prop6-nested"))) // type: float64, value: 15
 
 	convertedMap, ok := nestedObj.(map[string]any)
 	if !ok {
 		fmt.Println("conversion error for map")
 	} else {
-		showData(convertedMap["prop5-nested"]) // type: float64, value: 15
+		showData(convertedMap["prop6-nested"]) // type: float64, value: 15
 	}
 
 	fmt.Println()
 	for key, value := range objMap {
 		fmt.Printf("key: %s, value: %s\n", key, value)
 	}
+	// key: prop1, value: %!s(float64=12)
+	// key: prop2, value: %!s(float64=2.2)
+	// key: prop3, value: %!s(bool=false)
+	// key: prop4, value: %!s(<nil>)
+	// key: prop5, value: [%!s(float64=1) %!s(float64=2) %!s(float64=3) str]
+	// key: prop6, value: map[prop6-nested:%!s(float64=15)]
+	// key: name, value: Yuto
 
 	var objMapList []map[string]any
 
@@ -295,6 +312,23 @@ func withoutStruct() {
 	}
 	fmt.Println(objMapList[0]) // map[name:Yuto prop1:12]
 	fmt.Println(objMapList[1]) // map[name:Yuto2 prop1:33]
+}
+
+func handleArrayAndMap(array any) {
+	fmt.Println("--- handleArrayAndMap start ---")
+	switch v := array.(type) {
+	case []any:
+		for _, data := range v {
+			showData(data)
+		}
+	case map[string]any:
+		for key, value := range v {
+			fmt.Printf("key: %s, value: %+v\n", key, value)
+		}
+	default:
+		fmt.Println("not an array/map")
+	}
+	fmt.Println("--- handleArrayAndMap end ---")
 }
 
 func HandleJson() {
