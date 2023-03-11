@@ -3,12 +3,15 @@ package utils
 import (
 	"fmt"
 	"sort"
+	"time"
 )
 
 type mapKey struct {
 	key1 string
 	key2 int
 }
+
+const million = 1000000
 
 func RunMap() {
 	map1 := make(map[int]string)
@@ -23,6 +26,19 @@ func RunMap() {
 		"second": 2,
 		"third":  3,
 	}
+
+	fmt.Println(map1[1])         // one
+	fmt.Println(map1[3])         // three
+	fmt.Println(map2["first"])   // 1
+	fmt.Println(map2["third"])   // 3
+	fmt.Println(map1[99])        //
+	fmt.Println(map2["unknown"]) // 0
+	defaultValue()
+
+	measureInt(make(map[int]int, million))       // 130.739575ms
+	measureInt(make(map[int]int))                // 282.562644ms
+	measureString(make(map[int]string, million)) // 167.671049ms
+	measureString(make(map[int]string))          // 303.875606ms
 
 	showValue(map1, 1)       // value: [one]
 	showValue(map1, 2)       // key does not exist [2]
@@ -152,4 +168,51 @@ func sortAndIterate(m map[int]string) {
 	for _, key := range keys {
 		fmt.Printf("key: %d, value: %s\n", key, m[key])
 	}
+}
+
+func measureInt(m map[int]int) {
+	start := time.Now()
+	for i := 0; i < million; i++ {
+		m[i] = i
+	}
+	elapsed := time.Since(start)
+	fmt.Println(elapsed)
+}
+
+func measureString(m map[int]string) {
+	start := time.Now()
+	for i := 0; i < million; i++ {
+		m[i] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	}
+	elapsed := time.Since(start)
+	fmt.Println(elapsed)
+}
+
+func defaultValue() {
+	m1 := map[int]string{}
+	m1_2 := map[int]*string{}
+
+	m2 := map[int]int{}
+	m2_2 := map[int]*int{}
+
+	m3 := map[int]float64{}
+	m3_2 := map[int]*float64{}
+
+	m4 := map[int]time.Time{}
+	m4_2 := map[int]*time.Time{}
+
+	m5 := map[int]mapKey{}
+	m5_2 := map[int]*mapKey{}
+
+	fmt.Println(m1[1]) //
+	fmt.Println(m2[1]) // 0
+	fmt.Println(m3[1]) // 0
+	fmt.Println(m4[1]) // 0001-01-01 00:00:00 +0000 UTC
+	fmt.Println(m5[1]) // { 0}
+
+	fmt.Println(m1_2[1]) // <nil>
+	fmt.Println(m2_2[1]) // <nil>
+	fmt.Println(m3_2[1]) // <nil>
+	fmt.Println(m4_2[1]) // <nil>
+	fmt.Println(m5_2[1]) // <nil>
 }

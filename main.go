@@ -32,5 +32,6 @@ func main() {
 	// utils.RunArbitraryNumberOfArgs()
 	// utils.GetValueFromInterface()
 	// utils.SplitString()
-	utils.ConvertBetweenStringAndNumber()
+	// utils.ConvertBetweenStringAndNumber()
+	utils.RunMap()
 }
