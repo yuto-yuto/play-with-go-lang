@@ -33,5 +33,7 @@ func main() {
 	// utils.GetValueFromInterface()
 	// utils.SplitString()
 	// utils.ConvertBetweenStringAndNumber()
-	utils.RunMap()
+	// utils.RunMap()
+	// utils.ReplaceString()
+	utils.RunRegex()
 }
