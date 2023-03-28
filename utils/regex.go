@@ -22,17 +22,19 @@ func runMatch() {
 	fmt.Println(reg.Match([]byte("ID_1")))   // true
 	fmt.Println(reg.Match([]byte("ID_ONE"))) // false
 
-	fmt.Println(reg.MatchString("ID_1"))   // true
-	fmt.Println(reg.MatchString("ID_ONE")) // false
-
+	fmt.Println(reg.MatchString("ID_1"))             // true
+	fmt.Println(reg.MatchString("ID_123"))           // true
+	fmt.Println(reg.MatchString("something_ID_123")) // true
+	fmt.Println(reg.MatchString("ID_ONE"))           // false
 }
 
 func runFindSomething() {
 	reg, _ := regexp.Compile(`ID_\d`)
 
 	text := "ID_1, ID_42, RAW_ID_52, "
-	fmt.Printf("%q\n", reg.FindAllString(text, 2)) // ["ID_1" "ID_4"]
-	fmt.Printf("%q\n", reg.FindAllString(text, 5)) // ["ID_1" "ID_4" "ID_5"]
+	fmt.Printf("%q\n", reg.FindAllString(text, 2))      // ["ID_1" "ID_4"]
+	fmt.Printf("%q\n", reg.FindAllString(text, 5))      // ["ID_1" "ID_4" "ID_5"]
+	fmt.Printf("%v\n", reg.FindAllStringIndex(text, 5)) // [[0 4] [6 10] [17 21]]
 
 	result := reg.FindAllString(text, -1)
 	fmt.Printf("%q\n", result)               // ["ID_1" "ID_4" "ID_5"]
@@ -65,7 +67,11 @@ func panicCompile() {
 }
 
 func useQuoteMeta() {
-	_, err := regexp.Compile(regexp.QuoteMeta("ID_\\p"))
+	originalStr := "ID_\\p"
+	quotedStr := regexp.QuoteMeta(originalStr)
+	fmt.Println(originalStr) // ID_\p
+	fmt.Println(quotedStr)   // ID_\\p
+	_, err := regexp.Compile(quotedStr)
 	if err != nil {
 		fmt.Println("error in regex string")
 	}
