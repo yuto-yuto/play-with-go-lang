@@ -24,7 +24,7 @@ func main() {
 	// utils.DoStructTest()
 	// channelcontext.RunChannelContext()
 	// utils.RunOptionalParams()
-	// enum.RunEnum()
+	enum.RunEnum()
 	// utils.FormatTime()
 	// utils.SliceTest()
 	// utils.CreateFile()
