@@ -35,5 +35,6 @@ func main() {
 	// utils.ConvertBetweenStringAndNumber()
 	// utils.RunMap()
 	// utils.ReplaceString()
-	utils.RunRegex()
+	// utils.RunRegex()
+	utils.RunRange()
 }
