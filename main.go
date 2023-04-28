@@ -24,7 +24,7 @@ func main() {
 	// utils.DoStructTest()
 	// channelcontext.RunChannelContext()
 	// utils.RunOptionalParams()
-	enum.RunEnum()
+	// enum.RunEnum()
 	// utils.FormatTime()
 	// utils.SliceTest()
 	// utils.CreateFile()
@@ -36,5 +36,7 @@ func main() {
 	// utils.RunMap()
 	// utils.ReplaceString()
 	// utils.RunRegex()
-	utils.RunRange()
+	// utils.RunRange()
+	// utils.RunDefer()
+	utils.RunServer()
 }
