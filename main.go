@@ -38,5 +38,6 @@ func main() {
 	// utils.RunRegex()
 	// utils.RunRange()
 	// utils.RunDefer()
-	utils.RunServer()
+	// utils.RunServer()
+	utils.RunTilda()
 }
