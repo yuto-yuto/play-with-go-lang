@@ -20,6 +20,13 @@ func RunDefer() {
 		fmt.Printf("---- end(%d)\n", i)
 	}
 
+	{
+		fmt.Println("starts")
+		defer fmt.Println("hello")
+		fmt.Println("ends")
+	}
+	fmt.Println("exit...")
+
 }
 
 func doIt(index int) func(index int) {
