@@ -1,17 +1,52 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+)
 
 func SliceTest() {
 	var list []int
 
-	fmt.Println(list)
+	fmt.Println(list) // []
+	list = append(list, 9)
+	fmt.Println(list) // [9]
+	list = append(list, 8, 7, 6)
+	fmt.Println(list) // [9 8 7 6]
+
+	addNineByValue(list)
+	fmt.Println(list) // [9 8 7 6]
+	addNineByPointer(&list)
+	fmt.Println(list) // [9 8 7 6 9]
+
+	list = nil
+	fmt.Println(list)      // []
+	fmt.Println(len(list)) // 0
+
 	var emptyList []int
 	list = append(list, emptyList...)
-	fmt.Println(list)
+	fmt.Println(list) // []
 
-	list = append(list, []int{1, 2, 3, 4}...)
+	mySlice := []int{9, 8, 7, 6}
+	list = append(list, mySlice...)
+	fmt.Println(list) // [9 8 7 6]
+
+	list = nil
+
+	myArray := [4]int{5, 4, 3, 2}
+	list = append(list, myArray[:]...)
+	fmt.Println(list) // [5 4 3 2]
+
+	fmt.Println(reflect.TypeOf(myArray).Kind())    // array
+	fmt.Println(reflect.TypeOf(myArray[:]).Kind()) // slice
+
+	list = nil
+
+	fmt.Println("--- COLON ---")
+
+	list = append(list, 1, 2, 3, 4)
 	fmt.Println(list)      // [1 2 3 4]
+	fmt.Println(list[:])   // [1 2 3 4]
 	fmt.Println(list[0:])  // [1 2 3 4]
 	fmt.Println(list[0:1]) // [1]
 	fmt.Println(list[0:2]) // [1 2]
@@ -37,11 +72,47 @@ func SliceTest() {
 	// [result: 1 result: 4 result: 9 result: 16]
 	fmt.Println(Select(list, func(value int) string { return fmt.Sprintf("result: %d", value*value) }))
 
-	fmt.Println("--- Contains --- ")
-	fmt.Println(Contains(list, func(value int) bool { return value < 2 }))  // true
-	fmt.Println(Contains(list, func(value int) bool { return value > 4 }))  // false
-	fmt.Println(Contains(list, func(value int) bool { return value == 4 })) // true
+	fmt.Println("--- Some --- ")
+	fmt.Println(Some(list, func(value int) bool { return value < 2 }))  // true
+	fmt.Println(Some(list, func(value int) bool { return value > 4 }))  // false
+	fmt.Println(Some(list, func(value int) bool { return value == 4 })) // true
 
+	fmt.Println("--- Contains --- ")
+	fmt.Println(Contains(list, 2)) // true
+	fmt.Println(Contains(list, 4)) // true
+	fmt.Println(Contains(list, 5)) // false
+
+	fmt.Println("--- Find --- ")
+	fmt.Println(*Find(list, func(value int) bool { return value < 2 }))  // 1
+	fmt.Println(Find(list, func(value int) bool { return value > 4 }))   // <nil>
+	fmt.Println(*Find(list, func(value int) bool { return value == 4 })) // 4
+
+	fmt.Println("--- Find2 --- ")
+	value, ok := Find2(list, func(value int) bool { return value < 2 })
+	fmt.Printf("value: %v, ok: %t\n", value, ok)
+	value, ok = Find2(list, func(value int) bool { return value == 5 })
+	fmt.Printf("value: %v, ok: %t\n", value, ok)
+
+	map1 := map[string]int{"first": 1, "second": 2}
+	map2 := map[string]int{"three": 3, "four": 4}
+	valueMap, ok := Find2([]map[string]int{map1, map2}, func(valueMap map[string]int) bool {
+		_, ok := valueMap["first"]
+		return ok
+	})
+	fmt.Printf("value: %v, ok: %t\n", valueMap, ok) // value: map[first:1 second:2], ok: true
+
+	valueMap, ok = Find2([]map[string]int{map1, map2}, func(valueMap map[string]int) bool {
+		_, ok := valueMap["notExist"]
+		return ok
+	})
+	fmt.Printf("value: %v, ok: %t\n", valueMap, ok) // value: map[], ok: false
+}
+
+func addNineByValue(array []int) {
+	array = append(array, 9)
+}
+func addNineByPointer(array *[]int) {
+	*array = append(*array, 9)
 }
 
 func Filter[T any](array []T, callback func(T) bool) []T {
@@ -66,7 +137,7 @@ func Select[T any, K any](array []T, callback func(T) K) []K {
 	return result
 }
 
-func Contains[T any](array []T, callback func(T) bool) bool {
+func Some[T any](array []T, callback func(T) bool) bool {
 	for _, value := range array {
 		if callback(value) {
 			return true
@@ -74,4 +145,35 @@ func Contains[T any](array []T, callback func(T) bool) bool {
 	}
 
 	return false
+}
+
+func Contains[T comparable](array []T, searchValue T) bool {
+	for _, value := range array {
+		if value == searchValue {
+			return true
+		}
+	}
+
+	return false
+}
+
+func Find[T any](array []T, callback func(T) bool) *T {
+	for _, value := range array {
+		if callback(value) {
+			return &value
+		}
+	}
+
+	return nil
+}
+
+func Find2[T any](array []T, callback func(T) bool) (T, bool) {
+	for _, value := range array {
+		if callback(value) {
+			return value, true
+		}
+	}
+
+	var zeroValue T
+	return zeroValue, false
 }
