@@ -54,6 +54,16 @@ func runFindSomething() {
 	result2 := reg2.FindAllStringSubmatch(text, -1)
 	fmt.Printf("%q\n", result2) // [["ID_1" "ID" "1"] ["ID_42" "ID" "42"] ["RAW_ID_52" "RAW_ID" "52"]]
 	fmt.Printf("Key: %s, ID: %s\n", result2[2][1], result2[2][2])
+
+	reg3 := regexp.MustCompile(`(\d*)\\*([^\\]+)$`)
+	fmt.Printf("%q\n", reg3.FindStringSubmatch("1\\KeyName1"))             // ["1\\KeyName1" "1" "KeyName1"]
+	fmt.Printf("%q\n", reg3.FindStringSubmatch("12\\KeyName12"))           // ["12\\KeyName12" "12" "KeyName12"]
+	fmt.Printf("%q\n", reg3.FindStringSubmatch("KeyName2"))                // ["KeyName2" "" "KeyName2"]
+	fmt.Printf("%q\n", reg3.FindStringSubmatch("something\\12\\KeyName2")) // ["KeyName2" "" "KeyName2"]
+
+	reg4 := regexp.MustCompile(`^([^\\]+)$`)
+	fmt.Printf("%q\n", reg4.FindStringSubmatch("KeyName1")) // ["KeyName1" "KeyName1"]
+
 }
 
 func panicCompile() {
