@@ -9,6 +9,7 @@ require (
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/onsi/ginkgo/v2 v2.5.1 // indirect
 	github.com/onsi/gomega v1.24.1 // indirect
+	github.com/spf13/afero v1.9.5 // indirect
 	github.com/zserge/hid v0.0.0-20190124175232-e1626f1782f3 // indirect
 	golang.org/x/net v0.2.0 // indirect
 	golang.org/x/sys v0.2.0 // indirect

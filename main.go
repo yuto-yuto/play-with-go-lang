@@ -39,5 +39,6 @@ func main() {
 	// utils.RunRange()
 	// utils.RunDefer()
 	// utils.RunServer()
-	utils.RunTilda()
+	// utils.RunTilda()
+	utils.ToFromJSON()
 }
