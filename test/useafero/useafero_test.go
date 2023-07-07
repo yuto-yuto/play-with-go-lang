@@ -3,7 +3,7 @@ package useafero_test
 import (
 	"errors"
 	"os"
-	"play-with-go-lang/internal/useafero"
+	"play-with-go-lang/test/useafero"
 
 	"testing"
 
