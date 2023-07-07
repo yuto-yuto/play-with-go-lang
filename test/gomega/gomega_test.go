@@ -3,6 +3,7 @@ package gomega_test
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -146,6 +147,41 @@ var _ = Describe("Provider", func() {
 			Expect(mapValue).Should(Equal(map[string]int{"second": 2, "first": 1, "third": 3}))
 			Expect(mapValue).Should(HaveKey("second"))
 			Expect(mapValue).Should(HaveKeyWithValue("second", 2))
+		})
+	})
+
+	Describe("Asyncronous validation", func() {
+		It("goroutine", func() {
+			channel := make(chan int)
+			go func(c chan int) {
+				time.Sleep(100 * time.Millisecond)
+				c <- 1
+				time.Sleep(100 * time.Millisecond)
+				c <- 2
+				time.Sleep(100 * time.Millisecond)
+				c <- 3
+			}(channel)
+
+			Eventually(channel).Should(Receive())
+			Consistently(func() int { return <-channel }, "30ms").Should(Equal(2))
+			Eventually(<-channel).Should(Equal(3))
+		})
+
+		It("channel", func() {
+			channel := make(chan int)
+			go func(c chan int) {
+				time.Sleep(300 * time.Millisecond)
+				c <- 11
+			}(channel)
+
+			callback := func() int { return <-channel }
+			timeout := 2 * time.Second                // default 1s
+			pollingInterval := 149 * time.Millisecond // default 100ms
+			// Eventually(callback, timeout, pollingInterval).Should(Equal(11))
+			Eventually(callback).
+				WithTimeout(timeout).
+				WithPolling(pollingInterval).
+				Should(Equal(11))
 		})
 	})
 })
