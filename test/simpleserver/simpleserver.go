@@ -1,4 +1,4 @@
-package utils
+package simpleserver
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
-	"time"
+	// "time"
 )
 
 const (
@@ -33,18 +33,18 @@ func RunServer() {
 	server2 := startServerWithSpecifiedPort()
 	defer server2.Close()
 
-	for {
+	// for {
 
-		fmt.Println("--- server1 ---")
-		getData(server1.URL, dataPath)
-		getData(server1.URL, countPath)
+	// 	fmt.Println("--- server1 ---")
+	// 	getData(server1.URL, dataPath)
+	// 	getData(server1.URL, countPath)
 
-		fmt.Println("--- server2 ---")
-		getData(server2.URL, dataPath)
-		getData(server2.URL, countPath)
+	// 	fmt.Println("--- server2 ---")
+	// 	getData(server2.URL, dataPath)
+	// 	getData(server2.URL, countPath)
 
-		<-time.After(3 * time.Second)
-	}
+	// 	<-time.After(3 * time.Second)
+	// }
 }
 
 func getData(baseUrl string, apiPath string) {
