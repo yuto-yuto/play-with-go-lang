@@ -151,37 +151,63 @@ var _ = Describe("Provider", func() {
 	})
 
 	Describe("Asyncronous validation", func() {
-		It("goroutine", func() {
-			channel := make(chan int)
-			go func(c chan int) {
-				time.Sleep(100 * time.Millisecond)
-				c <- 1
-				time.Sleep(100 * time.Millisecond)
-				c <- 2
-				time.Sleep(100 * time.Millisecond)
-				c <- 3
-			}(channel)
+		Describe("Channel", func() {
+			It("send several times", func() {
+				channel := make(chan int)
+				go func(c chan int) {
+					time.Sleep(100 * time.Millisecond)
+					c <- 1
+					time.Sleep(100 * time.Millisecond)
+					c <- 2
+					time.Sleep(100 * time.Millisecond)
+					c <- 3
+				}(channel)
 
-			Eventually(channel).Should(Receive())
-			Consistently(func() int { return <-channel }, "30ms").Should(Equal(2))
-			Eventually(<-channel).Should(Equal(3))
-		})
+				Eventually(channel).Should(Receive())
+				Consistently(func() int { return <-channel }).Should(Equal(2))
+				Eventually(<-channel).Should(Equal(3))
+			})
 
-		It("channel", func() {
-			channel := make(chan int)
-			go func(c chan int) {
-				time.Sleep(300 * time.Millisecond)
-				c <- 11
-			}(channel)
+			It("with timeout", func() {
+				channel := make(chan int)
+				go func(c chan int) {
+					time.Sleep(300 * time.Millisecond)
+					c <- 11
+				}(channel)
 
-			callback := func() int { return <-channel }
-			timeout := 2 * time.Second                // default 1s
-			pollingInterval := 149 * time.Millisecond // default 100ms
-			// Eventually(callback, timeout, pollingInterval).Should(Equal(11))
-			Eventually(callback).
-				WithTimeout(timeout).
-				WithPolling(pollingInterval).
-				Should(Equal(11))
+				callback := func() int { return <-channel }
+				timeout := 2 * time.Second                // default 1s
+				pollingInterval := 149 * time.Millisecond // default 100ms
+				// Eventually(callback, timeout, pollingInterval).Should(Equal(11))
+				Eventually(callback).
+					WithTimeout(timeout).
+					WithPolling(pollingInterval).
+					Should(Equal(11))
+			})
+
+			It("with timeout", func() {
+				channel := make(chan bool)
+				go func(c chan bool) {
+					for {
+						select {
+						case c <- true:
+							fmt.Println("sent")
+						default:
+							fmt.Println("failed to send")
+						}
+						time.Sleep(100 * time.Millisecond)
+					}
+				}(channel)
+
+				Eventually(func() bool {
+					select {
+					case <-channel:
+						return true
+					case <-time.After(100 * time.Millisecond):
+						return false
+					}
+				}).WithTimeout(500 * time.Millisecond).Should(BeTrue())
+			})
 		})
 	})
 })

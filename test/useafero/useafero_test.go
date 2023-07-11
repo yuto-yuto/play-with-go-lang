@@ -65,7 +65,7 @@ var _ = Describe("afero test", func() {
 			Expect(err.Error()).Should(ContainSubstring("unexpected format"))
 		})
 
-		FIt("succeeds", func() {
+		It("succeeds", func() {
 			file, err := handler.FileSystem.Create("/unknown11a/tmp/data.txt")
 			Expect(err).ShouldNot(HaveOccurred())
 
