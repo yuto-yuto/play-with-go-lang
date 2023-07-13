@@ -23,6 +23,7 @@ func (e *ErrorWithPrep) Error() string {
 
 type ErrorIsImpl struct {
 	Name string
+	ID   int
 }
 
 func (e *ErrorIsImpl) Error() string {
@@ -35,7 +36,7 @@ func (e *ErrorIsImpl) Is(err error) bool {
 		return false
 	}
 
-	return other.Name == e.Name
+	return other.Name == e.Name && other.ID == e.ID
 }
 
 type WrappedError struct {
@@ -46,8 +47,8 @@ func (e *WrappedError) Error() string {
 	return fmt.Sprintf("wrapped error, original: %w", e.OriginalError)
 }
 
-func generateError() error {
-	return &ErrorWithoutPrep{}
+func (e *WrappedError) Unwrap() error {
+	return e.OriginalError
 }
 
 func runIs(original error, expected error) {
@@ -66,12 +67,13 @@ func RunCustomError() {
 
 	fmt.Println("------- errors.Is ------")
 
-	runIs(ErrPredefinedError, ErrPredefinedError)                     // true     true
-	runIs(&ErrorWithoutPrep{}, &ErrorWithoutPrep{})                   // true     true
-	runIs(&ErrorWithPrep{}, &ErrorWithPrep{})                         // false    false
-	runIs(&ErrorWithPrep{Name: "Yuto"}, &ErrorWithPrep{Name: "Yuto"}) // false    false
-	runIs(&ErrorIsImpl{Name: "Yuto"}, &ErrorIsImpl{Name: "Yuto"})     // true     true
-	runIs(&ErrorIsImpl{Name: "Yuto"}, &ErrorIsImpl{Name: "NN"})       // false    false
+	runIs(ErrPredefinedError, ErrPredefinedError)                               // true     true
+	runIs(&ErrorWithoutPrep{}, &ErrorWithoutPrep{})                             // true     true
+	runIs(&ErrorWithPrep{}, &ErrorWithPrep{})                                   // false    false
+	runIs(&ErrorWithPrep{Name: "Yuto"}, &ErrorWithPrep{Name: "Yuto"})           // false    false
+	runIs(&ErrorIsImpl{Name: "Yuto"}, &ErrorIsImpl{Name: "Yuto", ID: 2})        // false     false
+	runIs(&ErrorIsImpl{Name: "Yuto", ID: 1}, &ErrorIsImpl{Name: "Yuto", ID: 1}) // true     true
+	runIs(&ErrorIsImpl{Name: "Yuto"}, &ErrorIsImpl{Name: "NN"})                 // false    false
 
 	fmt.Println("------- errors.As compare same type------")
 	var withoutPrep *ErrorWithoutPrep
@@ -97,10 +99,7 @@ func RunCustomError() {
 	fmt.Println(errors.As(&ErrorIsImpl{Name: "Yuto"}, &withPrep)) // false
 	original := ErrorWithPrep{Name: "Yuto"}
 	wrappedError := &WrappedError{OriginalError: &original}
-	fmt.Println(errors.As(wrappedError, &withPrep))               // false
-	fmt.Println(errors.As(wrappedError.OriginalError, &withPrep)) // true
-
-	fmt.Println(errors.Is(wrappedError, withPrep))               // false
-	fmt.Println(errors.Is(wrappedError.OriginalError, withPrep)) // true
+	fmt.Println(errors.As(wrappedError, &withPrep)) // true
+	fmt.Println(errors.Is(wrappedError, withPrep))  // true
 
 }
