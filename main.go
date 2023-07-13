@@ -40,5 +40,6 @@ func main() {
 	// utils.RunDefer()
 	// utils.RunServer()
 	// utils.RunTilda()
-	utils.ToFromJSON()
+	// utils.ToFromJSON()
+	utils.RunCustomError()
 }
