@@ -23,8 +23,24 @@ type ErrorWithProp struct {
 	Name string
 }
 
-func (e ErrorWithProp) Error() string {
+func (e *ErrorWithProp) Error() string {
 	return "error message from ErrorWithProp"
+}
+
+type ErrorIsImpl struct {
+	Name string
+}
+
+func (e *ErrorIsImpl) Error() string {
+	return fmt.Sprintf("error message from ErrorIsImpl. name: %s", e.Name)
+}
+
+func (e *ErrorIsImpl) Is(err error) bool {
+	other, ok := err.(*ErrorIsImpl)
+	if !ok {
+		return false
+	}
+	return e.Name == other.Name
 }
 
 func TestBooks(t *testing.T) {
@@ -72,6 +88,21 @@ var _ = Describe("Provider", func() {
 			Expect(errors.As(wrappedErr, &expectedErr)).Should(BeTrue())
 
 			Expect(wrappedErr).ShouldNot(MatchError(&ErrorWithProp{Name: "Yuto"}))
+		})
+
+		It("with prep and Is impl", func() {
+			err := &ErrorIsImpl{Name: "Yuto"}
+			Expect(errors.Is(err, &ErrorIsImpl{Name: "Yuto"})).Should(BeTrue())
+
+			var expectedErr *ErrorIsImpl
+			Expect(errors.As(err, &expectedErr)).Should(BeTrue())
+
+			Expect(err).Should(MatchError(&ErrorIsImpl{Name: "Yuto"}))
+
+			wrappedErr := fmt.Errorf("additional error info here: %w", err)
+			Expect(errors.As(wrappedErr, &expectedErr)).Should(BeTrue())
+
+			Expect(wrappedErr).Should(MatchError(&ErrorIsImpl{Name: "Yuto"}))
 		})
 	})
 
