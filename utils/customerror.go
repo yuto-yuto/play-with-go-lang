@@ -13,6 +13,10 @@ func (e *ErrorWithoutPrep) Error() string {
 	return "error without prep"
 }
 
+func (e *ErrorWithoutPrep) ErrorCode() int {
+	return 11
+}
+
 type ErrorWithPrep struct {
 	Name string
 }
@@ -27,7 +31,7 @@ type ErrorIsImpl struct {
 }
 
 func (e *ErrorIsImpl) Error() string {
-	return fmt.Sprintf("error is impl, name: %s", e.Name)
+	return fmt.Sprintf("error is impl, ID: %d, name: %s", e.ID, e.Name)
 }
 
 func (e *ErrorIsImpl) Is(err error) bool {
@@ -44,7 +48,7 @@ type WrappedError struct {
 }
 
 func (e *WrappedError) Error() string {
-	return fmt.Sprintf("wrapped error, original: %w", e.OriginalError)
+	return fmt.Sprintf("wrapped error, original: %s", e.OriginalError.Error())
 }
 
 func (e *WrappedError) Unwrap() error {
@@ -88,6 +92,8 @@ func RunCustomError() {
 	result2 = errors.As(wrapped, &withPrep)
 	fmt.Printf("%v\t%v\n", result1, result2) // true		true
 
+	fmt.Println(errors.As(&ErrorWithoutPrep{}, &withPrep)) // false
+
 	var isImpl *ErrorIsImpl
 	wrapped = fmt.Errorf("wrapped error: %w", &ErrorIsImpl{Name: "Yuto"})
 	result1 = errors.As(&ErrorIsImpl{Name: "Yuto"}, &isImpl)
@@ -101,5 +107,4 @@ func RunCustomError() {
 	wrappedError := &WrappedError{OriginalError: &original}
 	fmt.Println(errors.As(wrappedError, &withPrep)) // true
 	fmt.Println(errors.Is(wrappedError, withPrep))  // true
-
 }
