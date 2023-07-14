@@ -5,7 +5,7 @@ ifneq ("$(wildcard .env)","")
 	USER_ID=123
 endif
 
-.PHONY: show_env multi_lines
+.PHONY: show_env multi_lines lint format
 
 show_env:
 	@echo ADDED_IN_ENV: $${ADDED_IN_ENV}
@@ -22,3 +22,9 @@ endef
 multi_lines:
 	@echo $${DEF1}
 	@echo "$${DEF1}"
+
+lint:
+	@golangci-lint run
+
+format:
+	@gofmt -w .
