@@ -87,7 +87,7 @@ var _ = Describe("Provider", func() {
 			wrappedErr := fmt.Errorf("additional error info here: %w", err)
 			Expect(errors.As(wrappedErr, &expectedErr)).Should(BeTrue())
 
-			Expect(wrappedErr).ShouldNot(MatchError(&ErrorWithProp{Name: "Yuto"}))
+			Expect(wrappedErr).Should(MatchError(&ErrorWithProp{Name: "Yuto"}))
 		})
 
 		It("with prep and Is impl", func() {
@@ -207,7 +207,7 @@ var _ = Describe("Provider", func() {
 				}(channel)
 
 				callback := func() int { return <-channel }
-				timeout := 2 * time.Second                // default 1s
+				timeout := 1 * time.Second                // default 1s
 				pollingInterval := 149 * time.Millisecond // default 100ms
 				// Eventually(callback, timeout, pollingInterval).Should(Equal(11))
 				Eventually(callback).
