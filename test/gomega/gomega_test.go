@@ -242,3 +242,141 @@ var _ = Describe("Provider", func() {
 		})
 	})
 })
+
+type Event struct {
+	Name  string
+	Value string
+}
+
+var _ = Describe("Channel with Struct", func() {
+	Describe("Literal", func() {
+		It("Expect", func() {
+			eventChan := make(chan int, 10)
+
+			go func(ch chan int) {
+				ch <- 22
+			}(eventChan)
+
+			Expect(<-eventChan).To(Equal(22))
+		})
+		It("Receive", func() {
+			eventChan := make(chan int, 10)
+
+			go func(ch chan int) {
+				ch <- 22
+			}(eventChan)
+
+			Eventually(eventChan).Should(Receive())
+		})
+		It("Receive with Equal", func() {
+			eventChan := make(chan int, 10)
+
+			go func(ch chan int) {
+				ch <- 22
+			}(eventChan)
+
+			Eventually(eventChan).Should(Receive(Equal(22)))
+		})
+	})
+
+	Describe("with Expect", func() {
+		It("", func() {
+			eventChan := make(chan Event, 10)
+
+			go func(ch chan Event) {
+				ch <- Event{
+					Name:  "Running",
+					Value: "dummy data",
+				}
+			}(eventChan)
+
+			Expect(<-eventChan).To(Equal(Event{
+				Name:  "Running",
+				Value: "dummy data",
+			}))
+		})
+	})
+
+	Describe("with Eventually", func() {
+		It("Receive", func() {
+			eventChan := make(chan Event, 10)
+
+			go func(ch chan Event) {
+				ch <- Event{
+					Name:  "Running",
+					Value: "dummy data",
+				}
+			}(eventChan)
+
+			Eventually(eventChan).Should(Receive())
+		})
+		It("Receive with Equal", func() {
+			eventChan := make(chan Event, 10)
+
+			go func(ch chan Event) {
+				ch <- Event{
+					Name:  "Running",
+					Value: "dummy data",
+				}
+			}(eventChan)
+
+			Eventually(eventChan).Should(Receive(Equal(Event{
+				Name:  "Running",
+				Value: "dummy data",
+			})))
+		})
+
+		It("Receive and get struct data", func() {
+			eventChan := make(chan Event, 10)
+
+			go func(ch chan Event) {
+				ch <- Event{
+					Name:  "Running",
+					Value: "dummy data",
+				}
+			}(eventChan)
+
+			var receivedEvent Event
+			Eventually(eventChan).Should(Receive(&receivedEvent))
+			Expect(receivedEvent.Name).To(Equal("Running"))
+			Expect(receivedEvent.Value).To(Equal("dummy data"))
+
+			Expect(receivedEvent.Value).To(And(
+				ContainSubstring("dummy"),
+				ContainSubstring("data"),
+			))
+			Expect(receivedEvent.Value).To(Or(
+				ContainSubstring("dummy"),
+				ContainSubstring("-------"),
+			))
+			Expect(receivedEvent.Value).To(Or(
+				ContainSubstring("-----"),
+				ContainSubstring("data"),
+			))
+		})
+
+		It("Receive data multiple time", func() {
+			eventChan := make(chan Event, 10)
+
+			go func(ch chan Event) {
+				ch <- Event{
+					Name:  "Running",
+					Value: "dummy data",
+				}
+				ch <- Event{
+					Name:  "Stop",
+					Value: "Let's take a break",
+				}
+			}(eventChan)
+
+			var receivedEvent Event
+			Eventually(eventChan).Should(Receive(&receivedEvent))
+			Expect(receivedEvent.Name).To(Equal("Running"))
+			Expect(receivedEvent.Value).To(Equal("dummy data"))
+
+			Eventually(eventChan).Should(Receive(&receivedEvent))
+			Expect(receivedEvent.Name).To(Equal("Stop"))
+			Expect(receivedEvent.Value).To(ContainSubstring("take a break"))
+		})
+	})
+})
