@@ -10,13 +10,19 @@ func BenchmarkWriteWithAtomic(b *testing.B) {
 		_ = utils.WriteInGoroutine()
 	}
 }
+
+func BenchmarkWriteWithAtomic2(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = utils.WriteInGoroutine2()
+	}
+}
 func BenchmarkWriteWithMutex(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = utils.WriteInGoroutineWithMutex()
 	}
 }
 
-// $ go test ./benchmark -bench Write  
+// $ go test ./benchmark -bench Write
 // goos: linux
 // goarch: amd64
 // pkg: play-with-go-lang/benchmark

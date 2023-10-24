@@ -38,6 +38,25 @@ func WriteInGoroutine() int64 {
 	return ops.Load()
 }
 
+func WriteInGoroutine2() int64 {
+	var ops int64
+	var wg sync.WaitGroup
+
+	for i := 0; i < 50; i++ {
+		wg.Add(1)
+		go func() {
+			for c := 0; c < 1000; c++ {
+				atomic.AddInt64(&ops, 1)
+			}
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+
+	return ops
+}
+
 func WriteInGoroutineWithMutex() int64 {
 	var ops int64
 	var wg sync.WaitGroup
