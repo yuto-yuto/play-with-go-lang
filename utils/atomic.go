@@ -11,6 +11,7 @@ func RunAtomic() {
 	fmt.Println(intValue.Load() == nil) // true
 
 	fmt.Println("atomic: ", WriteInGoroutine())
+	fmt.Println("atomic2: ", WriteInGoroutine2())
 	fmt.Println("mutex: ", WriteInGoroutineWithMutex())
 
 	// storeDifferentType()
@@ -82,12 +83,12 @@ func WriteInGoroutineWithMutex() int64 {
 func storeDifferentType() {
 	fmt.Println("--- storeDifferentType ---")
 
-	var intValue atomic.Value
-	fmt.Println(intValue.Load())
+	var value atomic.Value
+	fmt.Println(value.Load())
 	myData := myStruct{name: "Yuto", age: 36}
 
-	intValue.Store(myData)
-	loadedData := intValue.Load()
+	value.Store(myData)
+	loadedData := value.Load()
 	fmt.Println(loadedData)
 	fmt.Println(loadedData.(myStruct))
 
@@ -97,8 +98,8 @@ func storeDifferentType() {
 		Gender: "man",
 	}
 	// panic: sync/atomic: swap of inconsistently typed value into Value
-	intValue.Store(person)
-	fmt.Println(intValue.Load())
+	value.Store(person)
+	fmt.Println(value.Load())
 }
 
 func atomicWriteOrder() {
