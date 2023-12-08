@@ -43,5 +43,6 @@ func main() {
 	// utils.ToFromJSON()
 	// utils.RunCustomError()
 	// utils.RunAtomic()
-	utils.RunMultiAssign()
+	// utils.RunMultiAssign()
+	utils.RunTimer()
 }
