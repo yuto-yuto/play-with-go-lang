@@ -42,5 +42,6 @@ func main() {
 	// utils.RunTilda()
 	// utils.ToFromJSON()
 	// utils.RunCustomError()
-	utils.RunAtomic()
+	// utils.RunAtomic()
+	utils.RunMultiAssign()
 }
