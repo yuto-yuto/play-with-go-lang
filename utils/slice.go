@@ -177,3 +177,23 @@ func Find2[T any](array []T, callback func(T) bool) (T, bool) {
 	var zeroValue T
 	return zeroValue, false
 }
+
+func RunSliceArrayDeclaration() {
+	slice1 := []int{}
+	fmt.Printf("nil == %t; len:cap = %d:%d\n", slice1 == nil, len(slice1), cap(slice1))
+
+	var slice2 []int
+	fmt.Printf("nil == %t; len:cap = %d:%d\n", slice2 == nil, len(slice2), cap(slice2))
+
+	slice3 := make([]int, 0)
+	fmt.Printf("nil == %t; len:cap = %d:%d\n", slice3 == nil, len(slice3), cap(slice3))
+
+	array1 := [100]int{}
+	fmt.Printf("len:cap = %d:%d\n", len(array1), cap(array1))
+
+	array2 := make([]int, 0, 100)
+	fmt.Printf("len:cap = %d:%d\n", len(array2), cap(array2))
+
+	array3 := make([]int, 100, 100)
+	fmt.Printf("len:cap = %d:%d\n", len(array3), cap(array3))
+}

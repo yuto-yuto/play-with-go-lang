@@ -44,5 +44,8 @@ func main() {
 	// utils.RunCustomError()
 	// utils.RunAtomic()
 	// utils.RunMultiAssign()
-	utils.RunTimer()
+	// utils.RunTimer()
+
+	utils.RunSliceArrayDeclaration()
+
 }

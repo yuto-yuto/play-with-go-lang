@@ -9,6 +9,37 @@ func BenchmarkArrayEmptyDeclaration(b *testing.B) {
 		_ = []int{}
 	}
 }
+
+func BenchmarkArrayVarDeclaration(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var _ []int
+	}
+}
+
+func BenchmarkArrayMakeDeclaration(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = make([]int, 0)
+	}
+}
+
+func BenchmarkArraySizeDeclaration(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = [100]int{}
+	}
+}
+
+func BenchmarkArrayMakeSizeDeclaration(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = make([]int, 0, 100)
+	}
+}
+
+func BenchmarkArrayMakeSizeDeclaration2(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = make([]int, 100, 100)
+	}
+}
+
 func BenchmarkArrayEmptyDeclarationAndAssign(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		array := []int{}
@@ -17,11 +48,7 @@ func BenchmarkArrayEmptyDeclarationAndAssign(b *testing.B) {
 		}
 	}
 }
-func BenchmarkArrayVarDeclaration(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var _ []int
-	}
-}
+
 func BenchmarkArrayVarDeclarationAndAssign(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var array []int
@@ -31,11 +58,6 @@ func BenchmarkArrayVarDeclarationAndAssign(b *testing.B) {
 	}
 }
 
-func BenchmarkArrayMakeDeclaration(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		_ = make([]int, 0)
-	}
-}
 func BenchmarkArrayMakeDeclarationAndAssign(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		array := make([]int, 0)
@@ -45,11 +67,6 @@ func BenchmarkArrayMakeDeclarationAndAssign(b *testing.B) {
 	}
 }
 
-func BenchmarkArraySizeDeclaration(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		_ = [100]int{}
-	}
-}
 func BenchmarkArraySizeDeclarationAndAssign(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		array := [100]int{}
@@ -59,11 +76,6 @@ func BenchmarkArraySizeDeclarationAndAssign(b *testing.B) {
 	}
 }
 
-func BenchmarkArrayMakeSizeDeclaration(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		_ = make([]int, 0, 100)
-	}
-}
 func BenchmarkArrayMakeSizeDeclarationAndAssign(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		array := make([]int, 0, 100)
