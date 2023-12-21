@@ -195,6 +195,63 @@ func (m *Debouncer2) assignTimerOnlyOnce() {
 	m.startedTime = &now
 }
 
+type Debouncer2_2 struct {
+	Timeout      time.Duration
+	ForceTimeout time.Duration
+	Callback     func()
+	timer        *time.Timer
+	startedTime  *time.Time
+	mutex        sync.Mutex
+}
+
+func NewDebouncer2_2(timeout, forceTimeout time.Duration, callback func()) *Debouncer2_2 {
+	result := &Debouncer2_2{
+		Timeout:      timeout,
+		ForceTimeout: forceTimeout,
+		Callback:     callback,
+	}
+
+	internalCallback := func() {
+		result.mutex.Lock()
+		defer result.mutex.Unlock()
+
+		if result.startedTime != nil {
+			result.startedTime = nil
+			result.Callback()
+		}
+	}
+
+	result.timer = time.AfterFunc(timeout, internalCallback)
+	result.timer.Stop()
+
+	return result
+}
+
+func (m *Debouncer2_2) Debounce() {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if m.startedTime != nil && time.Since(*m.startedTime) > m.ForceTimeout {
+		m.startedTime = nil
+		m.Callback()
+
+		return
+	}
+
+	now := time.Now()
+	if !m.timer.Stop() {
+		// It's unnecessary to drain timer.C because it's not used by time.AfterFunc
+		m.startedTime = &now
+	} else {
+		if m.startedTime == nil {
+			// Stop() returns true if callback is fired by force timeout too.
+			m.startedTime = &now
+		}
+	}
+
+	m.timer.Reset(m.Timeout)
+}
+
 type Debouncer3 struct {
 	timeChan chan time.Time
 }
@@ -267,12 +324,12 @@ func NewDebouncer4(ctx context.Context, timeout, forceTimeout time.Duration, cal
 				}
 
 				now := time.Now()
-				diffForce := startedTime.Add(forceTimeout).Sub(now)
-				diffNormal := updatedTime.Add(timeout).Sub(now)
+				diffForceTimeout := startedTime.Add(forceTimeout).Sub(now)
+				diffNormalTimeout := updatedTime.Add(timeout).Sub(now)
 
-				diff := diffNormal
-				if diffForce < diffNormal {
-					diff = diffForce
+				diff := diffNormalTimeout
+				if diffForceTimeout < diffNormalTimeout {
+					diff = diffForceTimeout
 				}
 
 				if diff <= 0 {
