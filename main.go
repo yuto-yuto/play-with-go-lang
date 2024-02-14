@@ -45,7 +45,10 @@ func main() {
 	// utils.RunAtomic()
 	// utils.RunMultiAssign()
 	// utils.RunTimer()
+	// utils.RunLocking()
+	// utils.RunMemory()
+	utils.RunDynamicAccess()
 
-	utils.RunSliceArrayDeclaration()
+	// utils.RunSliceArrayDeclaration()
 
 }
