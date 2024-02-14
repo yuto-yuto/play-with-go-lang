@@ -119,6 +119,8 @@ func recursiveValue(value reflect.Value) {
 			fmt.Printf("bool value (%s: %v)\n", valueType.Field(i).Name, field.Bool())
 		case reflect.Int, reflect.Int32:
 			fmt.Printf("int value (%s: %v)\n", valueType.Field(i).Name, field.Int())
+		case reflect.String:
+			fmt.Printf("string value (%s: %v)\n", valueType.Field(i).Name, field.String())
 		case reflect.Pointer:
 			if field.Elem().Kind() == reflect.Struct {
 				recursiveValue(field.Elem())
