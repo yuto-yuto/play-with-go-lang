@@ -2,29 +2,24 @@ package utils
 
 import (
 	"fmt"
+	"reflect"
 	"unsafe"
+
+	"golang.org/x/exp/constraints"
 )
 
-type memory1 struct {
-	boolValue  bool
-	int32Value int32
-	boolValue2 bool
-}
-type memory1_2 struct {
-	boolValue  bool
-	int32Value int64
-	boolValue2 bool
+type empty struct{}
+
+type memory1[T constraints.Ordered] struct {
+	boolValue   bool
+	middleValue T
+	boolValue2  bool
 }
 
-type memory2 struct {
+type memory2[T constraints.Ordered] struct {
 	boolValue  bool
 	boolValue2 bool
-	int32Value int32
-}
-type memory2_2 struct {
-	boolValue  bool
-	boolValue2 bool
-	int32Value int64
+	lastValue  T
 }
 
 type memory3 struct {
@@ -40,8 +35,14 @@ type memory3 struct {
 }
 
 type hasStruct struct {
-	memory1 memory1
-	memory2 memory2
+	memory1 memory1[int32]
+	memory2 memory2[int32]
+}
+
+type hasMapAndSlice struct {
+	boolValue  bool
+	mapValue   map[int8]int64
+	sliceValue []int16
 }
 
 const (
@@ -49,32 +50,66 @@ const (
 	flagInt1  int  = 1
 )
 
+func checkStructInfo(obj any) {
+	value := reflect.ValueOf(obj)
+	fmt.Printf("struct size for [%s] is %d (any: %d)\n", value.Type().Name(), value.Type().Size(), unsafe.Sizeof(obj))
+
+	for i := 0; i < value.Type().NumField(); i++ {
+		typeField := value.Type().Field(i)
+		field := value.Field(i)
+		fmt.Printf("  %-10s: (offset: %d, align: %d, size: %d)\n", typeField.Name, typeField.Offset, field.Type().Align(), field.Type().Size())
+
+	}
+}
+
 func RunMemory() {
-	fmt.Println(unsafe.Sizeof(memory1{}))   // 12
-	fmt.Println(unsafe.Sizeof(memory1_2{})) // 24
-	fmt.Println(unsafe.Sizeof(memory2{}))   // 8
-	fmt.Println(unsafe.Sizeof(memory2_2{})) // 16
-	fmt.Println(unsafe.Sizeof(memory3{}))   // 8
+	fmt.Println(unsafe.Sizeof(memory1[int8]{}))  // 3
+	fmt.Println(unsafe.Sizeof(memory1[int16]{})) // 6
+	fmt.Println(unsafe.Sizeof(memory1[int32]{})) // 12
+	fmt.Println(unsafe.Sizeof(memory1[int64]{})) // 24
+
+	fmt.Println()
+
+	fmt.Println(unsafe.Sizeof(memory2[int8]{}))  // 3
+	fmt.Println(unsafe.Sizeof(memory2[int16]{})) // 4
+	fmt.Println(unsafe.Sizeof(memory2[int32]{})) // 8
+	fmt.Println(unsafe.Sizeof(memory2[int64]{})) // 16
+
+	fmt.Println()
+
 	fmt.Println(unsafe.Sizeof(hasStruct{})) // 20
+	checkStructInfo(hasMapAndSlice{})
+
+	fmt.Println()
+	checkStructInfo(memory1[int8]{})
+	checkStructInfo(memory1[int16]{})
+	checkStructInfo(memory1[int32]{})
+	checkStructInfo(memory1[int64]{})
+
+	fmt.Println()
+	checkStructInfo(memory2[int8]{})
+	checkStructInfo(memory2[int16]{})
+	checkStructInfo(memory2[int32]{})
+	checkStructInfo(memory2[int64]{})
+
+	fmt.Println()
+	checkStructInfo(memory1[string]{})
+	checkStructInfo(memory2[string]{})
+
+	fmt.Println()
+	strObj := memory1[string]{}
+	fmt.Println()
+	fmt.Printf("%p, size: %d, align: %d\n", &strObj, unsafe.Sizeof(strObj), unsafe.Alignof(strObj))
+	checkStructInfo(strObj)
+	strObj.middleValue = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
+	checkStructInfo(strObj)
+	fmt.Printf("%p, size: %d, align: %d\n", &strObj, unsafe.Sizeof(strObj), unsafe.Alignof(strObj))
 
 	fmt.Println()
 
-	obj := memory1{}
-	fmt.Printf("%p\n", &obj)            // 0xc000180000
-	fmt.Printf("%p\n", &obj.boolValue)  // 0xc000180000
-	fmt.Printf("%p\n", &obj.int32Value) // 0xc000180004
-	fmt.Printf("%p\n", &obj.boolValue2) // 0xc000180008
-
-	fmt.Println()
-
-	obj2 := memory2{}
-	fmt.Printf("%p\n", &obj2)            // 0xc000180020
-	fmt.Printf("%p\n", &obj2.boolValue)  // 0xc000180020
-	fmt.Printf("%p\n", &obj2.int32Value) // 0xc000180024
-	fmt.Printf("%p\n", &obj2.boolValue2) // 0xc000180021
-
-	fmt.Println()
-
-	fmt.Println(unsafe.Sizeof(flagBool1))
-	fmt.Println(unsafe.Sizeof(flagInt1))
+	arr := make([]int64, 0, 3)
+	fmt.Printf("%p, size: %d, align: %d\n", &arr, unsafe.Sizeof(arr), unsafe.Alignof(arr))
+	arr = append(arr, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
+	arr = append(arr, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
+	fmt.Printf("%p, size: %d, align: %d\n", &arr, unsafe.Sizeof(arr), unsafe.Alignof(arr))
 }
