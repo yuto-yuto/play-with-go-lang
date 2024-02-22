@@ -1,6 +1,6 @@
 module play-with-go-lang
 
-go 1.19
+go 1.21
 
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect

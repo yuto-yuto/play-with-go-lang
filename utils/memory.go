@@ -23,15 +23,40 @@ type memory2[T constraints.Ordered] struct {
 }
 
 type memory3 struct {
-	boolValue  bool
-	boolValue2 bool
-	boolValue3 bool
-	boolValue4 bool
-	// boolValue5 bool
-	// boolValue6 bool
-	// boolValue7 bool
-	// boolValue8 bool
-	int32Value int32
+	boolValue1  bool
+	boolValue2  bool
+	boolValue3  bool
+	boolValue4  bool
+	boolValue5  bool
+	boolValue6  bool
+	boolValue7  bool
+	boolValue8  bool
+	int32Value1 int64
+	int32Value2 int64
+	int32Value3 int64
+	int32Value4 int64
+	int32Value5 int64
+	int32Value6 int64
+	int32Value7 int64
+	int32Value8 int64
+}
+type memory3_2 struct {
+	boolValue1  bool
+	int32Value1 int64
+	boolValue2  bool
+	int32Value2 int64
+	boolValue3  bool
+	int32Value3 int64
+	boolValue4  bool
+	int32Value4 int64
+	boolValue5  bool
+	int32Value5 int64
+	boolValue6  bool
+	int32Value6 int64
+	boolValue7  bool
+	int32Value7 int64
+	boolValue8  bool
+	int32Value8 int64
 }
 
 type hasStruct struct {
@@ -112,4 +137,8 @@ func RunMemory() {
 	arr = append(arr, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
 	arr = append(arr, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
 	fmt.Printf("%p, size: %d, align: %d\n", &arr, unsafe.Sizeof(arr), unsafe.Alignof(arr))
+
+	sizeOfMemory3 := unsafe.Sizeof(memory3{})
+	sizeOfMemory3_2 := unsafe.Sizeof(memory3_2{})
+	fmt.Printf("%d, %d (diff: %d)\n", sizeOfMemory3, sizeOfMemory3_2, sizeOfMemory3_2-sizeOfMemory3)
 }

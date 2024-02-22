@@ -47,7 +47,8 @@ func main() {
 	// utils.RunTimer()
 	// utils.RunLocking()
 	// utils.RunMemory()
-	utils.RunDynamicAccess()
+	// utils.RunDynamicAccess()
+	utils.RunDeleteFunc()
 
 	// utils.RunSliceArrayDeclaration()
 
