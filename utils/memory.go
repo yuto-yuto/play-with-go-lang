@@ -67,7 +67,7 @@ type hasStruct struct {
 type hasMapAndSlice struct {
 	boolValue  bool
 	mapValue   map[int8]int64
-	sliceValue []int16
+	sliceValue []int64
 }
 
 const (
@@ -101,8 +101,8 @@ func RunMemory() {
 	fmt.Println(unsafe.Sizeof(memory2[int64]{})) // 16
 
 	fmt.Println()
-
 	fmt.Println(unsafe.Sizeof(hasStruct{})) // 20
+	checkStructInfo(hasStruct{})
 	checkStructInfo(hasMapAndSlice{})
 
 	fmt.Println()
@@ -129,6 +129,13 @@ func RunMemory() {
 	strObj.middleValue = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
 	checkStructInfo(strObj)
 	fmt.Printf("%p, size: %d, align: %d\n", &strObj, unsafe.Sizeof(strObj), unsafe.Alignof(strObj))
+
+	fmt.Println()
+
+	str1 := "123"
+	fmt.Printf("byte size: %d, length: %d, bytes: %v\n", len([]byte(str1)), len(str1), []byte(str1))
+	str2 := "はい"
+	fmt.Printf("byte size: %d, length: %d, bytes: %v\n", len([]byte(str2)), len(str2), []byte(str2))
 
 	fmt.Println()
 
