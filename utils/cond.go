@@ -28,12 +28,7 @@ func (s *syncWithChannel) Update(value int) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	s.state = value
-}
-
-func (s *syncWithChannel) GetCurrentState() int {
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	return s.state
+	s.signal <- true
 }
 
 func withChannel() {
@@ -55,16 +50,14 @@ func withChannel() {
 	for i := 0; i < 5; i++ {
 		time.Sleep(200 * time.Millisecond)
 		fmt.Printf("send channel %d\n", i)
-		withChannel.signal <- true
+		withChannel.Update(0)
 	}
 
 	fmt.Println("--- Update state to 1 ---")
-
-	withChannel.Update(1)
 	for i := 0; i < 5; i++ {
 		time.Sleep(500 * time.Millisecond)
 		fmt.Printf("send channel %d\n", i)
-		withChannel.signal <- true
+		withChannel.Update(1)
 	}
 
 	time.Sleep(2 * time.Second)
@@ -86,27 +79,34 @@ func (c *condTester) Wait() {
 	}
 }
 
-func (c *condTester) Update(value int) {
+func (c *condTester) SignalUpdate(value int) {
+	c.update(value)
+	c.cond.Signal()
+}
+
+func (c *condTester) BroadcastUpdate(value int) {
+	c.update(value)
+	c.cond.Broadcast()
+}
+
+func (c *condTester) update(value int) {
 	c.cond.L.Lock()
 	defer c.cond.L.Unlock()
 	c.state = value
 }
 
-func (c *condTester) GetCurrentState() int {
-	c.cond.L.Lock()
-	defer c.cond.L.Unlock()
-	return c.state
-}
-
 func withCond() {
 	condTester := &condTester{}
 	condTester.cond = sync.NewCond(&sync.Mutex{})
+	var wg sync.WaitGroup
 
 	for i := 0; i < 10; i++ {
+		wg.Add(1)
 		go func(i int) {
 			fmt.Printf("Waiting %d\n", i)
 			condTester.Wait()
 			fmt.Printf("Go %d\n", i)
+			wg.Done()
 		}(i)
 	}
 
@@ -116,25 +116,56 @@ func withCond() {
 	for i := 0; i < 5; i++ {
 		time.Sleep(200 * time.Millisecond)
 		fmt.Printf("send signal %d\n", i)
-		condTester.cond.Signal()
+		condTester.SignalUpdate(0)
 	}
 
-	fmt.Println("--- Update state to 1 ---")
+	fmt.Println("--- Signal Update state to 1 ---")
 
-	condTester.Update(1)
 	for i := 0; i < 5; i++ {
 		time.Sleep(500 * time.Millisecond)
 		fmt.Printf("send signal %d\n", i)
-		condTester.cond.Signal()
+		condTester.SignalUpdate(1)
+	}
+	
+	
+	fmt.Println("--- Signal with 0 ---")
+	condTester.SignalUpdate(0)
+
+	time.Sleep(2 * time.Second)
+	fmt.Println("--- Broadcast ---")
+	condTester.BroadcastUpdate(1)
+	wg.Wait()
+}
+
+func badCondExample() {
+	var mutex sync.Mutex
+	cond := sync.NewCond(&mutex)
+	var wg sync.WaitGroup
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func(i int) {
+			fmt.Printf("Waiting %d\n", i)
+			mutex.Lock()
+			defer mutex.Unlock()
+			cond.Wait()
+
+			fmt.Printf("Start %d\n", i)
+			time.Sleep(time.Second)
+			fmt.Printf("End %d\n", i)
+
+			wg.Done()
+		}(i)
 	}
 
 	time.Sleep(2 * time.Second)
 	fmt.Println("--- Broadcast ---")
-	condTester.cond.Broadcast()
-	time.Sleep(time.Second)
+	cond.Broadcast()
+	wg.Wait()
 }
 
 func RunCond() {
-	// withCond()
-	withChannel()
+	withCond()
+	// withChannel()
+	// badCondExample()
 }
