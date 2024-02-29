@@ -23,7 +23,7 @@ func main() {
 	// utils.HandleJson()
 	// utils.DoStructTest()
 	// channelcontext.RunChannelContext()
-	channelcontext.RunChannelWithDirection()
+	channelcontext.RunChannelDirection()
 	// utils.RunOptionalParams()
 	// enum.RunEnum()
 	// utils.FormatTime()
