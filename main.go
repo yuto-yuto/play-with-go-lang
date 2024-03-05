@@ -23,7 +23,7 @@ func main() {
 	// utils.HandleJson()
 	// utils.DoStructTest()
 	// channelcontext.RunChannelContext()
-	channelcontext.RunChannelDirection()
+	// channelcontext.RunChannelDirection()
 	// utils.RunOptionalParams()
 	// enum.RunEnum()
 	// utils.FormatTime()
@@ -50,7 +50,8 @@ func main() {
 	// utils.RunDynamicAccess()
 	// utils.RunDeleteFunc()
 	// utils.RunCond()
+	// utils.RunMethodTest()
+	utils.RunOnce()
 
 	// utils.RunSliceArrayDeclaration()
-
 }
