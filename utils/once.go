@@ -27,7 +27,7 @@ func RunOnce() {
 			startTime := time.Now()
 			fmt.Printf("start(%d)\n", i)
 			once2.Do(func() {
-				fmt.Printf("%s : %d", time.Now().String(), i)
+				fmt.Printf("%s : %d\n", time.Now().String(), i)
 				time.Sleep(time.Second)
 			})
 
