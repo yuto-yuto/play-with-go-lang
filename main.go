@@ -51,7 +51,8 @@ func main() {
 	// utils.RunDeleteFunc()
 	// utils.RunCond()
 	// utils.RunMethodTest()
-	utils.RunOnce()
+	// utils.RunOnce()
+	utils.SetDefaultValue()
 
 	// utils.RunSliceArrayDeclaration()
 }
