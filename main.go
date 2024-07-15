@@ -52,7 +52,8 @@ func main() {
 	// utils.RunCond()
 	// utils.RunMethodTest()
 	// utils.RunOnce()
-	utils.SetDefaultValue()
+	// utils.SetDefaultValue()
+	utils.RunSwitchType()
 
 	// utils.RunSliceArrayDeclaration()
 }
