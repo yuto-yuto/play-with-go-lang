@@ -82,8 +82,33 @@ func RunSwitchType() {
 		fmt.Println(personType)
 	}
 
-	// fmt.Println(containsAny.value)
+	fmt.Println("--- loop ---")
+	intValue2 := 22
+	yuto = person{
+		Name: "YUTO",
+		Age:  36,
+	}
+	items := []anyInStruct{
+		{
+			value: 10,
+		},
+		{
+			value: &intValue2,
+		},
+		{
+			value: person{
+				Name: "yuto",
+			},
+		},
+		{
+			value: &yuto,
+		},
+	}
 
+	for _, item := range items {
+		updateData(&item.value)
+		printBySwitchType(item.value)
+	}
 }
 
 func doSwitchType(value any) {
@@ -101,16 +126,35 @@ func doSwitchType(value any) {
 	}
 }
 
+func printBySwitchType(value any) {
+	switch val := value.(type) {
+	case int:
+		fmt.Println(val)
+	case *int:
+		fmt.Println(*val)
+	case person:
+		fmt.Println(val)
+	case *person:
+		fmt.Println(val)
+	default:
+		fmt.Println("default")
+	}
+}
+
 func updateData(value *any) {
 	switch val := (*value).(type) {
 	case int:
+		fmt.Print("int  - ")
 		val = 111
 	case *int:
+		fmt.Print("pointer int  - ")
 		newValue := 999
 		*val = newValue
 	case person:
+		fmt.Print("person  - ")
 		val.Name = "someone"
 	case *person:
+		fmt.Print("pointer person  - ")
 		val.Name = "someone2"
 	default:
 		fmt.Println("do nothing")
