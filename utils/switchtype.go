@@ -33,7 +33,7 @@ func RunSwitchType() {
 
 	fmt.Println("--- int is assigned to any---")
 	containsInt := anyInStruct{
-		value: int(10),
+		value: intValue,
 	}
 
 	doSwitchType(containsInt)  // default
@@ -44,8 +44,45 @@ func RunSwitchType() {
 	doSwitchType(&containsInt.value)   // default
 	doSwitchType(&(containsInt.value)) // default
 
+	fmt.Printf("%p, %p, %p\n", &containsInt, &containsInt.value, &(containsInt.value)) // 0xc000014180, 0xc000014180, 0xc000014180
+	checkStructInfo(containsInt)
+	// struct size for [anyInStruct] is 16 (any: 16)
+	// value     : (offset: 0, align: 8, size: 16)
+
+	containsPointerInt := anyInStruct{
+		value: &intValue,
+	}
+	containsPointerStruct := anyInStruct{
+		value: &yuto,
+	}
+	doSwitchType(containsPointerInt.value)    // int pointer
+	doSwitchType(containsPointerStruct.value) // (person pointer) name: Yuto
+
+	fmt.Println("--- update data ---")
+	updateData(&containsInt.value)
+	fmt.Println(containsInt.value) // 10
+	updateData(&containsStruct.value)
+	fmt.Println(containsStruct.value) // {Yuto 0}
+	updateData(&containsPointerStruct.value)
+	fmt.Println(containsPointerStruct.value) // &{someone2 0}
+
+	fmt.Println("--- update person ---")
+	person1 := person{
+		Name: "me",
+		Age:  55,
+	}
+	updatePerson(&person1)
+	fmt.Println(person1)
+
+	personType, ok := containsStruct.value.(person)
+	if !ok {
+		fmt.Println("failed to convert")
+	} else {
+		updatePerson(&personType)
+		fmt.Println(personType)
+	}
+
 	// fmt.Println(containsAny.value)
-	// fmt.Println(&containsAny.value)
 
 }
 
@@ -62,4 +99,26 @@ func doSwitchType(value any) {
 	default:
 		fmt.Println("default")
 	}
+}
+
+func updateData(value *any) {
+	switch val := (*value).(type) {
+	case int:
+		val = 111
+	case *int:
+		newValue := 999
+		*val = newValue
+	case person:
+		val.Name = "someone"
+	case *person:
+		val.Name = "someone2"
+	default:
+		fmt.Println("do nothing")
+	}
+}
+
+func updatePerson(value *person) {
+	value.Name = "new name"
+	value.Age = 99
+	value.Gender = "male"
 }
