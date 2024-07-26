@@ -4,8 +4,9 @@ import "fmt"
 
 func RunSwitchType() {
 	intValue := int(10)
-	doSwitchType(intValue)  // int
-	doSwitchType(&intValue) // int pointer
+	doSwitchType(intValue)         // int
+	doSwitchType("this is string") // default
+	doSwitchType(&intValue)        // int pointer
 
 	fmt.Println("--- person ---")
 	yuto := person{
@@ -15,7 +16,8 @@ func RunSwitchType() {
 	doSwitchType(&yuto) // person pointer
 
 	type anyInStruct struct {
-		value any
+		offset int
+		value  any
 	}
 
 	fmt.Println("--- struct is assigned to any---")
@@ -40,9 +42,12 @@ func RunSwitchType() {
 	doSwitchType(&containsInt) // default
 
 	fmt.Println("--- containsAny.value ---")
-	doSwitchType(containsInt.value)    // int
-	doSwitchType(&containsInt.value)   // default
-	doSwitchType(&(containsInt.value)) // default
+	doSwitchType(containsInt.offset)    // int
+	doSwitchType(&containsInt.offset)   // int pointer
+	doSwitchType(&(containsInt.offset)) // int pointer
+	doSwitchType(containsInt.value)     // int
+	doSwitchType(&containsInt.value)    // default
+	doSwitchType(&(containsInt.value))  // default
 
 	fmt.Printf("%p, %p, %p\n", &containsInt, &containsInt.value, &(containsInt.value)) // 0xc000014180, 0xc000014180, 0xc000014180
 	checkStructInfo(containsInt)
