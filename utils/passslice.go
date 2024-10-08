@@ -25,7 +25,7 @@ func passSlice1() {
 	// pointer address: 0xc0000b0058
 	// address of pointer: 0xc0000bc030
 	// len=8,cap=16
-	fmt.Println(arr)                                  // [1 11 3 4 5 77 88 99]
+	fmt.Println(arr)                                  // [1 22 3 4 5 77 88 99]
 	fmt.Printf("len=%d,cap=%d\n", len(arr), cap(arr)) // len=8,cap=16
 }
 
@@ -45,7 +45,7 @@ func passSlice2() {
 	// pointer address: 0xc0000b00b0
 	// address of pointer: 0xc0000bc0c0
 	// len=8,cap=10
-	fmt.Println(arr)      // [1 11 3 4 5 77 88 99]
+	fmt.Println(arr)                                  // [1 22 3 4 5 77 88 99]
 	fmt.Printf("len=%d,cap=%d\n", len(arr), cap(arr)) // len=8,cap=10
 
 }
@@ -53,14 +53,14 @@ func passSlice2() {
 func passValue(val []byte) {
 	fmt.Printf("%p, %p, %p, %p\n", val, &val[0], &val[1], &val[2])
 	val[1] = 11
-	val = append(val, 77, 88, 99)                     // this doesn't affect the original value
+	val = append(val, 77, 88, 99) // this doesn't affect the original value
 	fmt.Printf("len=%d,cap=%d\n", len(val), cap(val))
 }
 
 func passPointer(val *[]byte) {
 	fmt.Printf("pointer address: %p\n", *val)
 	fmt.Printf("address of pointer: %p\n", val)
-	(*val)[1] = 11
+	(*val)[1] = 22
 	*val = append(*val, 77, 88, 99)
 	fmt.Printf("len=%d,cap=%d\n", len(*val), cap(*val))
 }
