@@ -54,7 +54,8 @@ func main() {
 	// utils.RunOnce()
 	// utils.SetDefaultValue()
 	// utils.RunSwitchType()
-	utils.PassSlice()
+	// utils.PassSlice()
+	utils.RunPointerUpdate()
 
 	// utils.RunSliceArrayDeclaration()
 }
